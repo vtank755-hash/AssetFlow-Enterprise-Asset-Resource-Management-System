@@ -16,9 +16,9 @@ class Asset extends Model {
     }
 
     /**
-     * Fetch filtered assets.
+     * Fetch filtered assets with pagination.
      */
-    public function getAllFiltered($search = '', $category = '', $status = '', $location = '') {
+    public function getAllFiltered($search = '', $category = '', $status = '', $location = '', $limit = null, $offset = null) {
         $sql = "
             SELECT a.*, c.name as category_name 
             FROM assets a
@@ -49,9 +49,50 @@ class Asset extends Model {
 
         $sql .= " ORDER BY a.created_at DESC";
 
+        if ($limit !== null && $offset !== null) {
+            $sql .= " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+        }
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Get count of filtered assets.
+     */
+    public function getCountFiltered($search = '', $category = '', $status = '', $location = '') {
+        $sql = "
+            SELECT COUNT(*) 
+            FROM assets a
+            JOIN asset_categories c ON a.category_id = c.id
+            WHERE 1=1
+        ";
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " AND (a.name LIKE :search OR a.asset_tag LIKE :search OR a.serial_number LIKE :search OR a.model LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        if (!empty($category)) {
+            $sql .= " AND a.category_id = :category";
+            $params[':category'] = (int)$category;
+        }
+
+        if (!empty($status)) {
+            $sql .= " AND a.status = :status";
+            $params[':status'] = $status;
+        }
+
+        if (!empty($location)) {
+            $sql .= " AND a.location LIKE :location";
+            $params[':location'] = '%' . $location . '%';
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
     }
 
     /**

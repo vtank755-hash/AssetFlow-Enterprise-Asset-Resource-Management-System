@@ -151,8 +151,49 @@ $role = Session::getRole();
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
-                </table>
             </div>
+            
+            <!-- Pagination Footer -->
+            <?php if ($totalPages > 1): ?>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="text-muted small">
+                        Showing page <strong><?php echo $page; ?></strong> of <strong><?php echo $totalPages; ?></strong> (Total: <?php echo $totalCount; ?> assets)
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php 
+                                    echo BASE_URL; ?>/assets?page=<?php echo $page - 1; 
+                                    ?>&search=<?php echo urlencode($filters['search']); 
+                                    ?>&category=<?php echo urlencode($filters['category']); 
+                                    ?>&status=<?php echo urlencode($filters['status']); 
+                                    ?>&location=<?php echo urlencode($filters['location']); 
+                                ?>">Previous</a>
+                            </li>
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?php echo $page === $i ? 'active' : ''; ?>">
+                                    <a class="page-link" href="<?php 
+                                        echo BASE_URL; ?>/assets?page=<?php echo $i; 
+                                        ?>&search=<?php echo urlencode($filters['search']); 
+                                        ?>&category=<?php echo urlencode($filters['category']); 
+                                        ?>&status=<?php echo urlencode($filters['status']); 
+                                        ?>&location=<?php echo urlencode($filters['location']); 
+                                    ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?php echo $page >= $totalPages ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="<?php 
+                                    echo BASE_URL; ?>/assets?page=<?php echo $page + 1; 
+                                    ?>&search=<?php echo urlencode($filters['search']); 
+                                    ?>&category=<?php echo urlencode($filters['category']); 
+                                    ?>&status=<?php echo urlencode($filters['status']); 
+                                    ?>&location=<?php echo urlencode($filters['location']); 
+                                ?>">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

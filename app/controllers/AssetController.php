@@ -13,7 +13,7 @@ class AssetController extends Controller {
     }
 
     /**
-     * Lists assets with filters
+     * Lists assets with filters & pagination
      */
     public function index() {
         $this->checkAccess();
@@ -24,13 +24,24 @@ class AssetController extends Controller {
         $status = $_GET['status'] ?? '';
         $location = trim($_GET['location'] ?? '');
 
-        $assets = $this->assetModel->getAllFiltered($search, $category, $status, $location);
+        // Pagination parameters
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $totalCount = $this->assetModel->getCountFiltered($search, $category, $status, $location);
+        $totalPages = (int)ceil($totalCount / $limit);
+
+        $assets = $this->assetModel->getAllFiltered($search, $category, $status, $location, $limit, $offset);
         $categories = $this->assetModel->getCategories();
 
         $this->view('assets/index', [
             'title' => 'Assets Directory',
             'assets' => $assets,
             'categories' => $categories,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'totalCount' => $totalCount,
             'filters' => [
                 'search' => $search,
                 'category' => $category,
