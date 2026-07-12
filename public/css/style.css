@@ -411,3 +411,22 @@ details.css-dropdown .dropdown-menu-css button:hover {
     min-width: 180px;
     max-width: 320px;
 }
+
+/* Global Mobile Responsiveness for Page Header Rows */
+@media (max-width: 576px) {
+    .d-flex.justify-content-between.align-items-center.mb-4,
+    .d-flex.justify-content-between.align-items-start.mb-4 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-4 > a.btn,
+    .d-flex.justify-content-between.align-items-center.mb-4 > button.btn,
+    .d-flex.justify-content-between.align-items-start.mb-4 > a.btn,
+    .d-flex.justify-content-between.align-items-start.mb-4 > button.btn {
+        width: 100% !important;
+        text-align: center !important;
+    }
+}
+
