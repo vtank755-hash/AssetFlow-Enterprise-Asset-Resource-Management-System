@@ -90,6 +90,7 @@ class AssetController extends Controller {
             $this->validateCSRF();
             $tag = trim($_POST['asset_tag'] ?? '');
             $categoryId = $_POST['category_id'] ?? '';
+            $newCatName = trim($_POST['new_category_name'] ?? '');
             $name = trim($_POST['name'] ?? '');
             $model = trim($_POST['model'] ?? '');
             $serial = trim($_POST['serial_number'] ?? '');
@@ -99,8 +100,25 @@ class AssetController extends Controller {
             $status = $_POST['status'] ?? 'Available';
             $location = trim($_POST['location'] ?? '');
 
+            // Process New Category Name if provided
+            if (empty($categoryId) && !empty($newCatName)) {
+                $db = \App\Core\Database::getConnection();
+                $chkCat = $db->prepare("SELECT id FROM asset_categories WHERE name = ?");
+                $chkCat->execute([$newCatName]);
+                $existingCatId = $chkCat->fetchColumn();
+                
+                if ($existingCatId) {
+                    $categoryId = $existingCatId;
+                } else {
+                    $insCat = $db->prepare("INSERT INTO asset_categories (name) VALUES (?)");
+                    if ($insCat->execute([$newCatName])) {
+                        $categoryId = $db->lastInsertId();
+                    }
+                }
+            }
+
             if (empty($tag) || empty($categoryId) || empty($name) || empty($serial) || empty($purchaseDate) || empty($cost) || empty($deprecRate) || empty($location)) {
-                $error = 'Please fill in all required fields.';
+                $error = 'Please fill in all required fields (select a category or enter a new one).';
             } else {
                 // Validate unique tag and serial
                 $db = \App\Core\Database::getConnection();
@@ -158,6 +176,7 @@ class AssetController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->validateCSRF();
             $categoryId = $_POST['category_id'] ?? '';
+            $newCatName = trim($_POST['new_category_name'] ?? '');
             $name = trim($_POST['name'] ?? '');
             $model = trim($_POST['model'] ?? '');
             $serial = trim($_POST['serial_number'] ?? '');
@@ -167,8 +186,25 @@ class AssetController extends Controller {
             $status = $_POST['status'] ?? 'Available';
             $location = trim($_POST['location'] ?? '');
 
+            // Process New Category Name if provided
+            if (empty($categoryId) && !empty($newCatName)) {
+                $db = \App\Core\Database::getConnection();
+                $chkCat = $db->prepare("SELECT id FROM asset_categories WHERE name = ?");
+                $chkCat->execute([$newCatName]);
+                $existingCatId = $chkCat->fetchColumn();
+                
+                if ($existingCatId) {
+                    $categoryId = $existingCatId;
+                } else {
+                    $insCat = $db->prepare("INSERT INTO asset_categories (name) VALUES (?)");
+                    if ($insCat->execute([$newCatName])) {
+                        $categoryId = $db->lastInsertId();
+                    }
+                }
+            }
+
             if (empty($categoryId) || empty($name) || empty($serial) || empty($purchaseDate) || empty($cost) || empty($deprecRate) || empty($location)) {
-                $error = 'Please fill in all required fields.';
+                $error = 'Please fill in all required fields (select a category or enter a new one).';
             } else {
                 // Check serial duplicate excluding current
                 $db = \App\Core\Database::getConnection();

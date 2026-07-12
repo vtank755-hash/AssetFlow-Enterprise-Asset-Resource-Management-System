@@ -30,12 +30,13 @@ use App\Core\Session;
                             </div>
                             <div class="col-md-6">
                                 <label for="category_id" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                                <select class="form-select" id="category_id" name="category_id" required>
+                                <select class="form-select mb-2" id="category_id" name="category_id">
                                     <option value="" disabled selected>Select Category...</option>
                                     <?php foreach ($categories as $cat): ?>
                                         <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <input type="text" class="form-control form-control-sm" name="new_category_name" placeholder="Or enter a new category name...">
                             </div>
                         </div>
 
