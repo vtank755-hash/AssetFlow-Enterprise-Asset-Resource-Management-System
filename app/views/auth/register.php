@@ -15,12 +15,12 @@ use App\Core\Session;
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/style.css">
 </head>
 <body class="auth-bg">
-    <div class="auth-card" style="background-color: #0d0d0d; border: 1px solid #222; border-radius: 12px; padding: 2.5rem; max-width: 440px;">
+    <div class="auth-card" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2.5rem; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
         <div class="text-center mb-4">
-            <div class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle p-3 mb-3" style="width: 60px; height: 60px; border: 1px solid #fff; background-color: #111 !important;">
+            <div class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle p-3 mb-3" style="width: 60px; height: 60px; border: 1px solid #334155; background-color: #0f172a !important;">
                 <span class="fw-bold font-monospace" style="font-size: 18px; letter-spacing: 0.5px;">AF</span>
             </div>
-            <h3 class="fw-bold mb-1 text-white">AssetFlow – register</h3>
+            <h3 class="fw-bold mb-1 text-dark">AssetFlow – register</h3>
             <p class="text-muted small">Create an employee account to request checkouts.</p>
         </div>
 
@@ -35,33 +35,33 @@ use App\Core\Session;
             <input type="hidden" name="csrf_token" value="<?php echo Session::generateCSRFToken(); ?>">
             
             <div class="mb-3">
-                <label for="name" class="form-label text-light fw-medium">Full Name</label>
-                <input type="text" class="form-control bg-dark text-white border-secondary" id="name" name="name" required placeholder="e.g. John Doe" value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>" autofocus>
+                <label for="name" class="form-label text-secondary fw-semibold" style="font-size: 14px;">Full Name</label>
+                <input type="text" class="form-control border-secondary-subtle" id="name" name="name" required placeholder="e.g. John Doe" value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>" autofocus>
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label text-light fw-medium">Email Address</label>
-                <input type="email" class="form-control bg-dark text-white border-secondary" id="email" name="email" required placeholder="name@company.com" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
+                <label for="email" class="form-label text-secondary fw-semibold" style="font-size: 14px;">Email Address</label>
+                <input type="email" class="form-control border-secondary-subtle" id="email" name="email" required placeholder="name@company.com" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>">
             </div>
             
             <div class="mb-3">
-                <label for="password" class="form-label text-light fw-medium">Password</label>
-                <input type="password" class="form-control bg-dark text-white border-secondary" id="password" name="password" required placeholder="At least 8 characters">
+                <label for="password" class="form-label text-secondary fw-semibold" style="font-size: 14px;">Password</label>
+                <input type="password" class="form-control border-secondary-subtle" id="password" name="password" required placeholder="At least 8 characters">
             </div>
 
             <div class="mb-4">
-                <label for="confirm_password" class="form-label text-light fw-medium">Confirm Password</label>
-                <input type="password" class="form-control bg-dark text-white border-secondary" id="confirm_password" name="confirm_password" required placeholder="**********">
+                <label for="confirm_password" class="form-label text-secondary fw-semibold" style="font-size: 14px;">Confirm Password</label>
+                <input type="password" class="form-control border-secondary-subtle" id="confirm_password" name="confirm_password" required placeholder="**********">
             </div>
 
             <button type="submit" class="btn btn-primary w-100 py-2.5 fw-semibold mb-3">Sign Up</button>
         </form>
 
-        <hr style="border-top: 1px solid #333; margin: 1.5rem 0;">
+        <hr style="border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
 
         <div class="text-center mt-3">
             <span class="text-muted small">Already have an account?</span>
-            <a href="<?php echo BASE_URL; ?>/auth/login" class="text-decoration-none small ms-1 text-primary fw-medium">Sign in instead</a>
+            <a href="<?php echo BASE_URL; ?>/auth/login" class="text-decoration-none small ms-1 text-primary fw-semibold">Sign in instead</a>
         </div>
     </div>
 </body>
