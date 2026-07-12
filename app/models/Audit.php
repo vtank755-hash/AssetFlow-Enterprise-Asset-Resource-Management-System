@@ -74,8 +74,18 @@ class Audit extends Model {
      * Close/Complete an audit cycle.
      */
     public function closeCycle($cycleId) {
+        $stmtCycle = $this->db->prepare("SELECT title, assigned_auditor_id FROM audit_cycles WHERE id = ?");
+        $stmtCycle->execute([$cycleId]);
+        $cycle = $stmtCycle->fetch();
+
         $stmt = $this->db->prepare("UPDATE audit_cycles SET status = 'Completed' WHERE id = ?");
-        return $stmt->execute([$cycleId]);
+        $success = $stmt->execute([$cycleId]);
+
+        if ($success && $cycle) {
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Audit Completion', ?)");
+            $stmtNotif->execute([$cycle['assigned_auditor_id'], "The stocktake verification cycle '{$cycle['title']}' has been marked as Completed and closed."]);
+        }
+        return $success;
     }
 
     /**

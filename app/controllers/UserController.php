@@ -51,6 +51,12 @@ class UserController extends Controller {
                 if ($newId) {
                     $adminId = Session::getUserId();
                     $this->userModel->logAction($adminId, 'CREATE_USER', 'users', $newId, "Created user: $name <$email>, Role: $role");
+
+                    // Trigger Employee Registration Notification
+                    $db = \App\Core\Database::getConnection();
+                    $stmtNotif = $db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Employee Registration', ?)");
+                    $stmtNotif->execute([$newId, "Welcome to AssetFlow! Your employee account has been created successfully."]);
+
                     Session::setFlash('success', "User account for '{$name}' created successfully.");
                     $this->redirect('/users');
                 } else {
@@ -189,6 +195,10 @@ class UserController extends Controller {
                     if ($this->userModel->updatePassword($id, $passwordHash)) {
                         $successMsg = 'Password changed successfully.';
                         $this->userModel->logAction($id, 'CHANGE_PASSWORD', 'employees', $id, "Changed account password.");
+                        
+                        $db = \App\Core\Database::getConnection();
+                        $stmtNotif = $db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Password Reset', 'Your account password has been changed successfully.')");
+                        $stmtNotif->execute([$id]);
                     } else {
                         $error = 'Failed to update account password.';
                     }

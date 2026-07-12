@@ -136,6 +136,10 @@ class Allocation extends Model {
             // 4. Log audit details
             $this->logAction($returnedBy, 'CHECKIN_ASSET', 'asset_allocations', $allocationId, "Returned asset ID {$alloc['asset_id']} from employee ID {$alloc['employee_id']}");
 
+            // 5. Trigger Asset Return Notification
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Asset Return', ?)");
+            $stmtNotif->execute([$alloc['employee_id'], "The asset (ID {$alloc['asset_id']}) you checked out has been marked as returned."]);
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -186,7 +190,7 @@ class Allocation extends Model {
             INSERT INTO transfer_requests (asset_id, source_employee_id, target_employee_id, requested_by, status, requested_date, notes)
             VALUES (:asset_id, :source_id, :target_id, :req_by, 'Pending', :req_date, :notes)
         ");
-        return $stmt->execute([
+        $success = $stmt->execute([
             ':asset_id' => $assetId,
             ':source_id' => $sourceEmployeeId,
             ':target_id' => $targetEmployeeId,
@@ -194,6 +198,13 @@ class Allocation extends Model {
             ':req_date' => date('Y-m-d'),
             ':notes' => $notes
         ]);
+
+        if ($success) {
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Transfer Request', ?)");
+            $stmtNotif->execute([$targetEmployeeId, "A custodian transfer request has been initiated to assign Asset ID {$assetId} to you. Pending your custody approval."]);
+            $stmtNotif->execute([$sourceEmployeeId, "A custodian transfer request has been initiated to transfer Asset ID {$assetId} away from you."]);
+        }
+        return $success;
     }
 
     /**

@@ -67,6 +67,10 @@ class Maintenance extends Model {
             // 3. Log Audit
             $this->logAction($requestedBy, 'CREATE_WORK_ORDER', 'maintenance_requests', $orderId, "Scheduled maintenance order ID {$orderId} for asset ID {$assetId}");
 
+            // 4. Trigger Maintenance Request Notification
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Maintenance Request', ?)");
+            $stmtNotif->execute([$requestedBy, "A new maintenance request order '{$title}' has been successfully submitted and is pending review."]);
+
             $this->db->commit();
             return $orderId;
         } catch (Exception $e) {
