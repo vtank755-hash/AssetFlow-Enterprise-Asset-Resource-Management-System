@@ -267,7 +267,7 @@ use App\Core\Session;
                             foreach ($chartData['utilization'] as $item): 
                                 $pct = ($item['value'] / $scaleMax) * 100;
                             ?>
-                                <div class="d-flex flex-column align-items-center" style="height: 100%; width: 100px;">
+                                <div class="d-flex flex-column align-items-center justify-content-end" style="height: 100%; width: 100px;">
                                     <!-- Dynamic bar height from value -->
                                     <div class="bg-indigo w-25 position-relative bar-hover" 
                                          style="height: <?php echo max(5, $pct); ?>%; background: #6366f1 !important; border-radius: 4px 4px 0 0;"
