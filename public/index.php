@@ -83,5 +83,10 @@ $router->add('categories/create',    'CategoryController@create');
 $router->add('categories/edit',      'CategoryController@edit');
 $router->add('categories/delete',    'CategoryController@delete');
 
+// Register Resource Booking Routes
+$router->add('bookings',             'BookingController@index');
+$router->add('bookings/create',      'BookingController@create');
+$router->add('bookings/cancel',      'BookingController@cancel');
+
 // Dispatch Router request
 $router->dispatch($_SERVER['REQUEST_URI']);
