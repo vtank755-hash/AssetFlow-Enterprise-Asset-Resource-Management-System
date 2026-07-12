@@ -103,7 +103,13 @@ class Booking extends Model {
             ':status' => $status
         ]);
 
-        return $success ? $this->db->lastInsertId() : false;
+        if ($success) {
+            $bookingId = $this->db->lastInsertId();
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Booking Reminder', ?)");
+            $stmtNotif->execute([$employeeId, "Reservation confirmed for Resource ID {$assetId}. Period: {$startTime} to {$endTime}."]);
+            return $bookingId;
+        }
+        return false;
     }
 
     /**

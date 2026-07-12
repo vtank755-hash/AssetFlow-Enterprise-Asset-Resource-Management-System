@@ -61,7 +61,13 @@ class Audit extends Model {
             ':loc_scope' => !empty($locationScope) ? $locationScope : null
         ]);
 
-        return $success ? $this->db->lastInsertId() : false;
+        if ($success) {
+            $cycleId = $this->db->lastInsertId();
+            $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Audit Reminder', ?)");
+            $stmtNotif->execute([$auditorId, "You have been assigned as the auditor for cycle: '{$title}'. Scheduled from {$startDate} to {$endDate}."]);
+            return $cycleId;
+        }
+        return false;
     }
 
     /**

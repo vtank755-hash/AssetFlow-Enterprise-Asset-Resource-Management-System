@@ -13,6 +13,14 @@ if ($currentUri === '') {
 
 $role = Session::getRole();
 $userName = Session::getUserName();
+
+// Fetch Unread Notifications Count
+$unreadNotifCount = 0;
+$userId = Session::getUserId();
+if ($userId) {
+    $notifModel = new \App\Models\Notification();
+    $unreadNotifCount = $notifModel->getUnreadCount($userId);
+}
 ?>
 <nav id="sidebar">
     <div class="sidebar-header">
@@ -46,6 +54,26 @@ $userName = Session::getUserName();
         <li class="<?php echo (strpos($currentUri, 'inventory') === 0) ? 'active' : ''; ?>">
             <a href="<?php echo BASE_URL; ?>/inventory">
                 <i class="bi bi-journal-text"></i> Inventory
+            </a>
+        </li>
+        <li class="<?php echo (strpos($currentUri, 'bookings') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/bookings">
+                <i class="bi bi-calendar-event"></i> Bookings
+            </a>
+        </li>
+        <?php if ($role === 'Admin' || $role === 'Manager'): ?>
+            <li class="<?php echo (strpos($currentUri, 'audits') === 0) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/audits">
+                    <i class="bi bi-clipboard-check"></i> Audits
+                </a>
+            </li>
+        <?php endif; ?>
+        <li class="<?php echo (strpos($currentUri, 'notifications') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/notifications" class="d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-bell"></i> Notifications</span>
+                <?php if ($unreadNotifCount > 0): ?>
+                    <span class="badge bg-danger rounded-pill px-2.5 py-1" style="font-size: 10.5px;"><?php echo $unreadNotifCount; ?></span>
+                <?php endif; ?>
             </a>
         </li>
         

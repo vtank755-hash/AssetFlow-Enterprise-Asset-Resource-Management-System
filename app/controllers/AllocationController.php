@@ -36,6 +36,10 @@ class AllocationController extends Controller {
                 $db = \App\Core\Database::getConnection();
                 $stmt = $db->prepare("UPDATE asset_allocations SET status = 'Overdue' WHERE id = ?");
                 $stmt->execute([$alloc['id']]);
+
+                // Trigger Overdue Return notification
+                $stmtNotif = $db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Overdue Return', ?)");
+                $stmtNotif->execute([$alloc['employee_id'], "The asset '{$alloc['asset_name']}' (Tag: {$alloc['asset_tag']}) is overdue. Please return it immediately."]);
             }
         }
 

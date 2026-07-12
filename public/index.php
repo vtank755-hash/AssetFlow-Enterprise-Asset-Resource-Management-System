@@ -99,5 +99,10 @@ $router->add('audits/verify',        'AuditController@verify');
 $router->add('audits/close',         'AuditController@close');
 $router->add('audits/report',        'AuditController@report');
 
+// Register Notifications Routes
+$router->add('notifications',         'NotificationController@index');
+$router->add('notifications/read',    'NotificationController@read');
+$router->add('notifications/readAll', 'NotificationController@readAll');
+
 // Dispatch Router request
 $router->dispatch($_SERVER['REQUEST_URI']);

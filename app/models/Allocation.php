@@ -87,6 +87,10 @@ class Allocation extends Model {
             // 4. Record Audit Log
             $this->logAction($allocatedBy, 'CHECKOUT_ASSET', 'asset_allocations', $allocationId, "Checked out asset ID {$assetId} to employee ID {$employeeId}");
 
+            // 5. Trigger Asset Assigned Notification
+            $stmt = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Asset Assigned', ?)");
+            $stmt->execute([$employeeId, "A new asset (ID {$assetId}) has been checked out and assigned to you. Expected return date: {$dueDate}."]);
+
             $this->db->commit();
             return $allocationId;
         } catch (Exception $e) {
@@ -251,6 +255,11 @@ class Allocation extends Model {
 
             // 5. Log action
             $this->logAction($actionBy, 'TRANSFER_ASSET', 'transfer_requests', $requestId, "Approved asset custody transfer ID {$req['asset_id']} to employee ID {$req['target_employee_id']}");
+
+            // 6. Trigger Transfer Approved Notifications
+            $stmt = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Transfer Approved', ?)");
+            $stmt->execute([$req['target_employee_id'], "Custodian transfer request approved. You are now the active custodian for Asset ID {$req['asset_id']}."]);
+            $stmt->execute([$req['source_employee_id'], "Custodian transfer request approved. Custody of Asset ID {$req['asset_id']} has been transferred to Employee ID {$req['target_employee_id']}."]);
 
             $this->db->commit();
             return true;

@@ -126,6 +126,12 @@ class Maintenance extends Model {
             $userId = Session::getUserId();
             $this->logAction($userId, 'UPDATE_WORK_ORDER', 'maintenance_requests', $id, "Updated status to {$status} for order ID {$id}");
 
+            // 5. Trigger Maintenance Approved Notification if transition is met
+            if ($status === 'Approved' && $order['status'] !== 'Approved') {
+                $stmtNotif = $this->db->prepare("INSERT INTO notifications (employee_id, title, message) VALUES (?, 'Maintenance Approved', ?)");
+                $stmtNotif->execute([$order['requested_by'], "Your scheduled maintenance request '{$title}' has been approved by management."]);
+            }
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
