@@ -32,7 +32,7 @@
                         <?php else: ?>
                             <?php foreach ($records as $row): ?>
                                 <tr>
-                                    <td><span class="fw-bold text-dark"><?php echo htmlspecialchars($row['category_name']); ?></span></td>
+                                    <td class="text-wrap"><span class="fw-bold text-dark"><?php echo htmlspecialchars($row['category_name']); ?></span></td>
                                     <td><?php echo htmlspecialchars($row['total_assets']); ?> assets</td>
                                     <td>
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1">

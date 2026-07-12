@@ -63,7 +63,7 @@ $role = Session::getRole();
                         <?php else: ?>
                             <?php foreach ($items as $item): ?>
                                 <tr class="<?php echo ($item['quantity'] < $item['min_threshold']) ? 'table-danger-subtle' : ''; ?>">
-                                    <td>
+                                    <td class="text-wrap">
                                         <span class="fw-semibold text-dark d-block"><?php echo htmlspecialchars($item['name']); ?></span>
                                     </td>
                                     <td><strong class="font-monospace text-muted"><?php echo htmlspecialchars($item['sku']); ?></strong></td>
