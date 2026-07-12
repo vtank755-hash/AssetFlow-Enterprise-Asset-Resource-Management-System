@@ -2,6 +2,15 @@
 use App\Core\Session;
 ?>
 <div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="no-print">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/dashboard" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/bookings" class="text-decoration-none">Bookings</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Reserve Resource</li>
+        </ol>
+    </nav>
+
     <div class="mb-4">
         <a href="<?php echo BASE_URL; ?>/bookings" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i> Back to Reservations Directory</a>
         <h1 class="h3 mt-2 mb-0 fw-bold">Reserve Resource</h1>

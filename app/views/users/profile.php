@@ -2,6 +2,14 @@
 use App\Core\Session;
 ?>
 <div class="container-fluid py-4">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="no-print">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/dashboard" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Account Settings</li>
+        </ol>
+    </nav>
+
     <div class="mb-4">
         <h1 class="h3 mb-0 fw-bold">Account Settings</h1>
         <p class="text-muted">Manage your personal profile information, security password credentials, and system preferences.</p>

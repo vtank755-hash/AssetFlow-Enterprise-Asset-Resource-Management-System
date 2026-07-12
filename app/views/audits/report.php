@@ -1,4 +1,13 @@
 <div class="container-fluid py-4 print-container">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="no-print">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/dashboard" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/audits" class="text-decoration-none">Audits</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Discrepancy Report</li>
+        </ol>
+    </nav>
+
     <!-- Breadcrumb / Header -->
     <div class="mb-4 d-flex justify-content-between align-items-center no-print">
         <div>

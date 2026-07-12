@@ -7,6 +7,14 @@ $canAudit = ($role === 'Admin' || $role === 'Manager' || $isAssignedAuditor);
 ?>
 <div class="container-fluid py-4">
     <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="no-print">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/dashboard" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/audits" class="text-decoration-none">Audits</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Checklist</li>
+        </ol>
+    </nav>
+
     <div class="mb-4 d-flex justify-content-between align-items-start">
         <div>
             <a href="<?php echo BASE_URL; ?>/audits" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i> Back to Audits Directory</a>

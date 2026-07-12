@@ -61,26 +61,41 @@ if ($userId) {
                 <i class="bi bi-calendar-event"></i> Bookings
             </a>
         </li>
-        <?php if ($role === 'Admin' || $role === 'Manager'): ?>
-            <li class="<?php echo (strpos($currentUri, 'audits') === 0) ? 'active' : ''; ?>">
-                <a href="<?php echo BASE_URL; ?>/audits">
-                    <i class="bi bi-clipboard-check"></i> Audits
-                </a>
-            </li>
-        <?php endif; ?>
-        <li class="<?php echo (strpos($currentUri, 'notifications') === 0) ? 'active' : ''; ?>">
+        <li class="<?php echo ($currentUri === 'notifications') ? 'active' : ''; ?>">
             <a href="<?php echo BASE_URL; ?>/notifications" class="d-flex align-items-center justify-content-between">
                 <span><i class="bi bi-bell"></i> Notifications</span>
                 <?php if ($unreadNotifCount > 0): ?>
-                    <span class="badge bg-danger rounded-pill px-2.5 py-1" style="font-size: 10.5px;"><?php echo $unreadNotifCount; ?></span>
+                    <span class="badge bg-danger rounded-pill px-2 py-0.5" style="font-size: 10px;"><?php echo $unreadNotifCount; ?></span>
                 <?php endif; ?>
             </a>
         </li>
-        
+        <li class="<?php echo ($currentUri === 'profile') ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/profile">
+                <i class="bi bi-person-gear"></i> Profile & Settings
+            </a>
+        </li>
+
         <?php if ($role === 'Admin' || $role === 'Manager'): ?>
+            <li class="sidebar-separator py-2 px-3 text-muted uppercase font-monospace fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">Administration</li>
+            
+            <li class="<?php echo ($currentUri === 'departments') ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/departments">
+                    <i class="bi bi-building"></i> Departments Setup
+                </a>
+            </li>
+            <li class="<?php echo ($currentUri === 'categories') ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/categories">
+                    <i class="bi bi-tags"></i> Categories Setup
+                </a>
+            </li>
+            <li class="<?php echo (strpos($currentUri, 'audits') === 0) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/audits">
+                    <i class="bi bi-clipboard-check"></i> Audits & Stocktakes
+                </a>
+            </li>
             <li class="<?php echo (strpos($currentUri, 'reports') === 0) ? 'active' : ''; ?>">
                 <a href="<?php echo BASE_URL; ?>/reports">
-                    <i class="bi bi-bar-chart-line"></i> Reports
+                    <i class="bi bi-bar-chart-line"></i> Reports Overview
                 </a>
             </li>
         <?php endif; ?>
@@ -88,10 +103,22 @@ if ($userId) {
         <?php if ($role === 'Admin'): ?>
             <li class="<?php echo (strpos($currentUri, 'users') === 0) ? 'active' : ''; ?>">
                 <a href="<?php echo BASE_URL; ?>/users">
-                    <i class="bi bi-people"></i> Users CRUD
+                    <i class="bi bi-people"></i> Employees Directory
                 </a>
             </li>
         <?php endif; ?>
+
+        <li class="sidebar-separator py-2 px-3 text-muted uppercase font-monospace fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">Shortcuts</li>
+        <li>
+            <a href="<?php echo BASE_URL; ?>/dashboard#activity-logs">
+                <i class="bi bi-clock-history"></i> Activity Logs
+            </a>
+        </li>
+        <li>
+            <a href="<?php echo BASE_URL; ?>/auth/logout" class="text-danger-emphasis">
+                <i class="bi bi-box-arrow-right"></i> Logout System
+            </a>
+        </li>
     </ul>
 
     <!-- Bottom User Bar -->
