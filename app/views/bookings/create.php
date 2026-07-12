@@ -26,6 +26,15 @@ use App\Core\Session;
                 </div>
             <?php endif; ?>
 
+            <?php if (empty($assets)): ?>
+                <div class="alert alert-warning border-0 shadow-sm mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    No assets representing bookable resources (Rooms, Vehicles, Equipment) found.
+                    Please <a href="<?php echo BASE_URL; ?>/assets" class="alert-link">register an asset</a> or 
+                    <a href="<?php echo BASE_URL; ?>/categories" class="alert-link">add a category</a> first.
+                </div>
+            <?php endif; ?>
+
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <form action="<?php echo BASE_URL; ?>/bookings/create" method="POST">
@@ -34,12 +43,16 @@ use App\Core\Session;
                         <div class="mb-3">
                             <label for="asset_id" class="form-label fw-semibold">Resource / Asset <span class="text-danger">*</span></label>
                             <select class="form-select" id="asset_id" name="asset_id" required>
-                                <option value="" disabled selected>Select Resource Room / Vehicle / Equipment...</option>
-                                <?php foreach ($assets as $asset): ?>
-                                    <option value="<?php echo $asset['id']; ?>">
-                                        [<?php echo htmlspecialchars($asset['category_name']); ?>] <?php echo htmlspecialchars($asset['name']); ?> (<?php echo htmlspecialchars($asset['asset_tag']); ?>)
-                                    </option>
-                                <?php endforeach; ?>
+                                <?php if (empty($assets)): ?>
+                                    <option value="" disabled selected>No active rooms, vehicles, or equipment available in catalog</option>
+                                <?php else: ?>
+                                    <option value="" disabled selected>Select Resource Room / Vehicle / Equipment...</option>
+                                    <?php foreach ($assets as $asset): ?>
+                                        <option value="<?php echo $asset['id']; ?>">
+                                            [<?php echo htmlspecialchars($asset['category_name']); ?>] <?php echo htmlspecialchars($asset['name']); ?> (<?php echo htmlspecialchars($asset['asset_tag']); ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </select>
                             <div class="form-text">Listing only active catalog assets representing rooms, vehicles, and tools.</div>
                         </div>
