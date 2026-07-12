@@ -396,3 +396,18 @@ details.css-dropdown .dropdown-menu-css button:hover {
         border: 1px solid var(--border-color);
     }
 }
+
+/* Table cell wrapping controls to prevent awkward vertical squashing */
+.table th, .table td {
+    white-space: nowrap;
+}
+
+/* Allow controlled wrapping for description and name columns */
+.table td.text-wrap, 
+.table td.text-normal,
+.table td.wrap-column,
+.table .text-wrap {
+    white-space: normal !important;
+    min-width: 180px;
+    max-width: 320px;
+}
