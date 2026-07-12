@@ -56,6 +56,11 @@ use App\Core\Session;
 
             <button type="submit" class="btn btn-primary w-100 py-2.5">Sign In</button>
         </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <span class="text-muted small">New to AssetFlow?</span>
+            <a href="<?php echo BASE_URL; ?>/auth/register" class="text-decoration-none small ms-1" style="color: var(--accent-color); font-weight: 500;">Create an account</a>
+        </div>
     </div>
 </body>
 </html>

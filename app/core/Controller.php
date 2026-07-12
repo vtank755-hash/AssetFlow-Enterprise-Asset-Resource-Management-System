@@ -20,6 +20,10 @@ abstract class Controller {
      * @return void
      */
     protected function redirect($path) {
+        if (defined('TEST_MODE') && TEST_MODE === true) {
+            echo "[MOCK REDIRECT TO: {$path}]";
+            return;
+        }
         header("Location: " . BASE_URL . $path);
         exit;
     }

@@ -27,6 +27,7 @@ $router = new Router();
 
 // Register Authentication Routes
 $router->add('auth/login',           'AuthController@login');
+$router->add('auth/register',        'AuthController@register');
 $router->add('auth/logout',          'AuthController@logout');
 $router->add('auth/forgot-password', 'AuthController@forgotPassword');
 $router->add('auth/reset-password',  'AuthController@resetPassword');

@@ -207,4 +207,73 @@ class AuthController extends Controller {
             'token' => $token
         ]);
     }
+
+    /**
+     * Handles employee signup (registration)
+     */
+    public function register() {
+        if (Session::isAuthenticated()) {
+            $this->redirect('/dashboard');
+        }
+
+        $error = '';
+        $name = '';
+        $email = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->validateCSRF();
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
+                $error = 'Please fill in all fields.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Invalid email address format.';
+            } elseif (strlen($password) < 8) {
+                $error = 'Password must be at least 8 characters long.';
+            } elseif ($password !== $confirmPassword) {
+                $error = 'Passwords do not match.';
+            } else {
+                $existingUser = $this->userModel->getByEmail($email);
+                if ($existingUser) {
+                    $error = 'This email address is already registered.';
+                } else {
+                    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                    $newUserId = $this->userModel->create($name, $email, $passwordHash, 'Staff', 'Active');
+
+                    if ($newUserId) {
+                        // Log Audit Trail
+                        $this->userModel->logAction($newUserId, 'REGISTER', 'users', $newUserId, 'User signed up successfully.');
+
+                        // Send Verification Email (Email Verification Ready)
+                        $verifyLink = 'http://' . $_SERVER['HTTP_HOST'] . BASE_URL . '/auth/verify-email?id=' . $newUserId . '&token=' . bin2hex(random_bytes(16));
+                        $subject = 'Verify Your Email Address - ' . APP_NAME;
+                        $body = "
+                            <h2>Welcome to AssetFlow</h2>
+                            <p>Hi {$name},</p>
+                            <p>Thank you for signing up. Please click the button below to verify your email address:</p>
+                            <p><a href='{$verifyLink}' style='background:#6366f1;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;'>Verify Email</a></p>
+                            <p>Or copy and paste this URL into your browser:</p>
+                            <p>{$verifyLink}</p>
+                        ";
+                        Mailer::send($email, $subject, $body);
+
+                        Session::setFlash('success', 'Registration successful! Verification email sent. You can now log in.');
+                        $this->redirect('/auth/login');
+                    } else {
+                        $error = 'Registration failed. Please try again.';
+                    }
+                }
+            }
+        }
+
+        $this->view('auth/register', [
+            'no_layout' => true,
+            'error' => $error,
+            'name' => $name,
+            'email' => $email
+        ]);
+    }
 }
