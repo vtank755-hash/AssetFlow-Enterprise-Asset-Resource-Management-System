@@ -2,6 +2,16 @@
 use App\Core\Session;
 ?>
 <div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="no-print">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/dashboard" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/assets" class="text-decoration-none">Assets</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/assets/view?id=<?php echo $asset['id']; ?>" class="text-decoration-none"><?php echo htmlspecialchars($asset['asset_tag']); ?></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Asset</li>
+        </ol>
+    </nav>
+
     <div class="mb-4">
         <a href="<?php echo BASE_URL; ?>/assets/view?id=<?php echo $asset['id']; ?>" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i> Back to Asset Profile</a>
         <h1 class="h3 mt-2 mb-0 fw-bold">Edit Asset Details</h1>
