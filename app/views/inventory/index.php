@@ -80,31 +80,8 @@ $role = Session::getRole();
                                     <?php if ($role === 'Admin' || $role === 'Manager'): ?>
                                         <td class="text-end">
                                             <div class="d-inline-flex align-items-center">
-                                                <!-- Pure CSS details trigger for Quick Qty Adjustments (Desktop Only) -->
-                                                <details class="css-dropdown me-1 d-none d-md-inline-block">
-                                                    <summary class="btn btn-sm btn-outline-success py-1 px-2.5">
-                                                        <i class="bi bi-arrow-down-up"></i> Adjust
-                                                    </summary>
-                                                    <div class="dropdown-menu-css p-3 text-start" style="right: 0; width: 240px; font-size:13px;">
-                                                        <form action="<?php echo BASE_URL; ?>/inventory/edit?id=<?php echo $item['id']; ?>&action=adjust" method="POST">
-                                                            <input type="hidden" name="csrf_token" value="<?php echo Session::generateCSRFToken(); ?>">
-                                                            
-                                                            <div class="mb-2">
-                                                                <label for="quantity_change_<?php echo $item['id']; ?>" class="form-label mb-1 text-dark fw-bold">Stock Adjustment</label>
-                                                                <input type="number" class="form-control form-control-sm" id="quantity_change_<?php echo $item['id']; ?>" name="quantity_change" placeholder="e.g. +10 or -5" required>
-                                                                <div class="form-text text-muted" style="font-size: 10px;">Use positive numbers to add stock, negative to consume.</div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label for="reason_<?php echo $item['id']; ?>" class="form-label mb-1 text-dark">Reason</label>
-                                                                <input type="text" class="form-control form-control-sm" id="reason_<?php echo $item['id']; ?>" name="reason" placeholder="e.g. replenishment, check-out">
-                                                            </div>
-                                                            <button type="submit" class="btn btn-sm btn-success w-100 py-1.5 fw-medium">Save Adjustment</button>
-                                                        </form>
-                                                    </div>
-                                                </details>
-
-                                                <!-- Direct link to adjustment form (Mobile Only) -->
-                                                <a href="<?php echo BASE_URL; ?>/inventory/edit?id=<?php echo $item['id']; ?>&action=adjust" class="btn btn-sm btn-outline-success d-md-none me-1">
+                                                <!-- Direct link to quantity adjustment form -->
+                                                <a href="<?php echo BASE_URL; ?>/inventory/edit?id=<?php echo $item['id']; ?>&action=adjust" class="btn btn-sm btn-outline-success py-1 px-2.5 me-1">
                                                     <i class="bi bi-arrow-down-up"></i> Adjust
                                                 </a>
 
