@@ -84,7 +84,9 @@ class BookingController extends Controller {
             $endTime = $_POST['end_time'] ?? '';
             $purpose = trim($_POST['purpose'] ?? '');
 
-            if (empty($assetId) || empty($startTime) || empty($endTime) || empty($purpose)) {
+            if (empty($assets)) {
+                $error = 'No active rooms, vehicles, or equipment are available. Please contact the Asset Manager or create a resource before making a booking.';
+            } elseif (empty($assetId) || empty($startTime) || empty($endTime) || empty($purpose)) {
                 $error = 'All fields are required.';
             } elseif ($startTime >= $endTime) {
                 $error = 'End time must be after start time.';

@@ -28,10 +28,18 @@ use App\Core\Session;
 
             <?php if (empty($assets)): ?>
                 <div class="alert alert-warning border-0 shadow-sm mb-4">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    No assets representing bookable resources (Rooms, Vehicles, Equipment) found.
-                    Please <a href="<?php echo BASE_URL; ?>/assets" class="alert-link">register an asset</a> or 
-                    <a href="<?php echo BASE_URL; ?>/categories" class="alert-link">add a category</a> first.
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 text-warning"></i>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">No Bookable Resources Available</h6>
+                            <p class="mb-0 small text-dark-emphasis">No active rooms, vehicles, or equipment are available. Please contact the Asset Manager or create a resource before making a booking.</p>
+                            <?php if ($role === 'Admin' || $role === 'Manager'): ?>
+                                <a href="<?php echo BASE_URL; ?>/assets/create" class="btn btn-sm btn-warning mt-2 fw-semibold px-3 py-1.5 text-dark"><i class="bi bi-box-seam me-1.5"></i>Go to Asset Management</a>
+                            <?php else: ?>
+                                <a href="<?php echo BASE_URL; ?>/notifications" class="btn btn-sm btn-warning mt-2 fw-semibold px-3 py-1.5 text-dark"><i class="bi bi-chat-right-text me-1.5"></i>Contact Administrator</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -42,7 +50,7 @@ use App\Core\Session;
 
                         <div class="mb-3">
                             <label for="asset_id" class="form-label fw-semibold">Resource / Asset <span class="text-danger">*</span></label>
-                            <select class="form-select" id="asset_id" name="asset_id" required>
+                            <select class="form-select <?php echo empty($assets) ? 'is-invalid' : ''; ?>" id="asset_id" name="asset_id" required <?php echo empty($assets) ? 'disabled' : ''; ?>>
                                 <?php if (empty($assets)): ?>
                                     <option value="" disabled selected>No active rooms, vehicles, or equipment available in catalog</option>
                                 <?php else: ?>
@@ -54,7 +62,12 @@ use App\Core\Session;
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
-                            <div class="form-text">Listing only active catalog assets representing rooms, vehicles, and tools.</div>
+                            <?php if (empty($assets)): ?>
+                                <div class="invalid-feedback">
+                                    No active rooms, vehicles, or equipment are available. Please contact the Asset Manager or create a resource before making a booking.
+                                </div>
+                            <?php endif; ?>
+                            <div class="form-text text-muted small">Listing only active catalog assets representing rooms, vehicles, and tools.</div>
                         </div>
 
                         <div class="row mb-3">
@@ -74,7 +87,7 @@ use App\Core\Session;
                         </div>
 
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary px-4">Confirm Reservation</button>
+                            <button type="submit" class="btn btn-primary px-4" <?php echo empty($assets) ? 'disabled' : ''; ?>>Confirm Reservation</button>
                             <a href="<?php echo BASE_URL; ?>/bookings" class="btn btn-light px-3">Cancel</a>
                         </div>
                     </form>
