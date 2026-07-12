@@ -45,7 +45,10 @@ $role = Session::getRole();
                         <option value="">All Statuses</option>
                         <option value="Available" <?php echo $filters['status'] === 'Available' ? 'selected' : ''; ?>>Available</option>
                         <option value="Allocated" <?php echo $filters['status'] === 'Allocated' ? 'selected' : ''; ?>>Allocated</option>
+                        <option value="Reserved" <?php echo $filters['status'] === 'Reserved' ? 'selected' : ''; ?>>Reserved</option>
                         <option value="Maintenance" <?php echo $filters['status'] === 'Maintenance' ? 'selected' : ''; ?>>Maintenance</option>
+                        <option value="Lost" <?php echo $filters['status'] === 'Lost' ? 'selected' : ''; ?>>Lost</option>
+                        <option value="Retired" <?php echo $filters['status'] === 'Retired' ? 'selected' : ''; ?>>Retired</option>
                         <option value="Disposed" <?php echo $filters['status'] === 'Disposed' ? 'selected' : ''; ?>>Disposed</option>
                     </select>
                 </div>
@@ -100,11 +103,19 @@ $role = Session::getRole();
                                     <td><?php echo htmlspecialchars($asset['category_name']); ?></td>
                                     <td><?php echo htmlspecialchars($asset['location']); ?></td>
                                     <td>
-                                        <span class="status-badge <?php 
-                                            echo $asset['status'] === 'Available' ? 'status-available' : 
-                                                ($asset['status'] === 'Allocated' ? 'status-allocated' : 
-                                                ($asset['status'] === 'Maintenance' ? 'status-maintenance' : 'status-disposed')); 
-                                        ?>">
+                                        <?php
+                                        $statusClass = 'bg-secondary text-white';
+                                        switch ($asset['status']) {
+                                            case 'Available': $statusClass = 'status-available'; break;
+                                            case 'Allocated': $statusClass = 'status-allocated'; break;
+                                            case 'Reserved': $statusClass = 'bg-primary-subtle text-primary border border-primary-subtle'; break;
+                                            case 'Maintenance': $statusClass = 'status-maintenance'; break;
+                                            case 'Lost': $statusClass = 'bg-danger-subtle text-danger border border-danger-subtle'; break;
+                                            case 'Retired': $statusClass = 'bg-secondary-subtle text-secondary border border-secondary-subtle'; break;
+                                            case 'Disposed': $statusClass = 'status-disposed'; break;
+                                        }
+                                        ?>
+                                        <span class="status-badge <?php echo $statusClass; ?>">
                                             <?php echo htmlspecialchars($asset['status']); ?>
                                         </span>
                                     </td>

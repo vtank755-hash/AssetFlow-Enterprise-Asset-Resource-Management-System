@@ -17,11 +17,19 @@ $role = Session::getRole();
                 </a>
             <?php endif; ?>
             
-            <span class="status-badge px-3 py-1.5 fs-6 <?php 
-                echo $asset['status'] === 'Available' ? 'status-available' : 
-                    ($asset['status'] === 'Allocated' ? 'status-allocated' : 
-                    ($asset['status'] === 'Maintenance' ? 'status-maintenance' : 'status-disposed')); 
-            ?>">
+            <?php
+            $statusClass = 'bg-secondary text-white';
+            switch ($asset['status']) {
+                case 'Available': $statusClass = 'status-available'; break;
+                case 'Allocated': $statusClass = 'status-allocated'; break;
+                case 'Reserved': $statusClass = 'bg-primary-subtle text-primary border border-primary-subtle'; break;
+                case 'Maintenance': $statusClass = 'status-maintenance'; break;
+                case 'Lost': $statusClass = 'bg-danger-subtle text-danger border border-danger-subtle'; break;
+                case 'Retired': $statusClass = 'bg-secondary-subtle text-secondary border border-secondary-subtle'; break;
+                case 'Disposed': $statusClass = 'status-disposed'; break;
+            }
+            ?>
+            <span class="status-badge px-3 py-1.5 fs-6 <?php echo $statusClass; ?>">
                 <i class="bi bi-circle-fill me-1" style="font-size: 8px; vertical-align: middle;"></i>
                 <?php echo htmlspecialchars($asset['status']); ?>
             </span>
@@ -128,6 +136,47 @@ $role = Session::getRole();
 
             <!-- Context Info Sidebar -->
             <div class="col-lg-5">
+                <!-- Asset Photo Card -->
+                <?php if (!empty($asset['photo_path'])): ?>
+                    <div class="card shadow-sm border-0 mb-4 overflow-hidden">
+                        <img src="<?php echo BASE_URL . '/' . $asset['photo_path']; ?>" alt="Asset Image" class="img-fluid" style="width: 100%; max-height: 250px; object-fit: cover;">
+                    </div>
+                <?php endif; ?>
+
+                <!-- QR Code Visual Card -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4 text-center">
+                        <h6 class="fw-bold text-dark text-start mb-3"><i class="bi bi-qr-code text-indigo me-2"></i>QR Code & Tag</h6>
+                        <div class="d-inline-block border p-3 rounded mb-2 bg-white">
+                            <div class="bg-dark text-white p-2 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; font-weight: 800; font-size: 11px;">
+                                <i class="bi bi-qr-code fs-1"></i>
+                            </div>
+                        </div>
+                        <div class="text-muted small font-monospace">QR-<?php echo htmlspecialchars($asset['asset_tag']); ?></div>
+                    </div>
+                </div>
+
+                <!-- Attached Documents Card -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-arrow-down text-indigo me-2"></i>Attached Documents</h6>
+                        <?php if (empty($documents)): ?>
+                            <span class="text-muted small">No receipts or manuals uploaded.</span>
+                        <?php else: ?>
+                            <ul class="list-group list-group-flush mb-0">
+                                <?php foreach ($documents as $doc): ?>
+                                    <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center bg-transparent border-light">
+                                        <span class="text-dark small text-truncate me-2" style="max-width: 180px;" title="<?php echo htmlspecialchars($doc['document_name']); ?>">
+                                            <i class="bi bi-file-text me-2"></i><?php echo htmlspecialchars($doc['document_name']); ?>
+                                        </span>
+                                        <a href="<?php echo BASE_URL . '/' . $doc['file_path']; ?>" class="btn btn-sm btn-outline-primary py-0.5 px-2" download><i class="bi bi-download"></i></a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
                 <div class="card shadow-sm border-0 mb-4 bg-light">
                     <div class="card-body p-4">
                         <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-1 text-indigo"></i> Quick Actions</h5>

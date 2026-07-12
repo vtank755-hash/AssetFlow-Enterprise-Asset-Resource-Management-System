@@ -19,7 +19,7 @@ use App\Core\Session;
 
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
-                    <form action="<?php echo BASE_URL; ?>/assets/create" method="POST">
+                    <form action="<?php echo BASE_URL; ?>/assets/create" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?php echo Session::generateCSRFToken(); ?>">
 
                         <div class="row mb-3">
@@ -82,13 +82,25 @@ use App\Core\Session;
                         </div>
 
                         <div class="row mb-4">
-                            <div class="col-md-6">
+                            <div class="col-md-4 mb-3 mb-md-0">
                                 <label for="status" class="form-label fw-semibold">Initial Status</label>
                                 <select class="form-select" id="status" name="status">
                                     <option value="Available" selected>Available</option>
                                     <option value="Allocated">Allocated</option>
+                                    <option value="Reserved">Reserved</option>
                                     <option value="Maintenance">Maintenance</option>
+                                    <option value="Lost">Lost</option>
+                                    <option value="Retired">Retired</option>
+                                    <option value="Disposed">Disposed</option>
                                 </select>
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <label for="photo" class="form-label fw-semibold">Asset Photo</label>
+                                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="documents" class="form-label fw-semibold">Asset Documents</label>
+                                <input type="file" class="form-control" id="documents" name="documents[]" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                             </div>
                         </div>
 

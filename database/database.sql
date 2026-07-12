@@ -90,8 +90,9 @@ CREATE TABLE `assets` (
   `purchase_date` DATE NOT NULL,
   `purchase_cost` DECIMAL(12,2) NOT NULL,
   `depreciation_rate` DECIMAL(5,2) NOT NULL COMMENT 'Annual straight-line rate (e.g. 20.00)',
-  `status` ENUM('Available', 'Allocated', 'Maintenance', 'Disposed') NOT NULL DEFAULT 'Available',
+  `status` ENUM('Available', 'Allocated', 'Reserved', 'Maintenance', 'Lost', 'Retired', 'Disposed') NOT NULL DEFAULT 'Available',
   `location` VARCHAR(150) NOT NULL,
+  `photo_path` VARCHAR(255) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`category_id`) REFERENCES `asset_categories`(`id`) ON DELETE RESTRICT

@@ -63,6 +63,12 @@ class AssetController extends Controller {
         $allocations = $this->assetModel->getAllocationsHistory($id);
         $maintenances = $this->assetModel->getMaintenanceHistory($id);
 
+        // Fetch documents
+        $db = \App\Core\Database::getConnection();
+        $docStmt = $db->prepare("SELECT * FROM asset_documents WHERE asset_id = ?");
+        $docStmt->execute([$id]);
+        $documents = $docStmt->fetchAll();
+
         $activeTab = $_GET['tab'] ?? 'info';
 
         $this->view('assets/view', [
@@ -71,6 +77,7 @@ class AssetController extends Controller {
             'depreciation' => $depreciation,
             'allocations' => $allocations,
             'maintenances' => $maintenances,
+            'documents' => $documents,
             'activeTab' => $activeTab
         ]);
     }
@@ -83,8 +90,10 @@ class AssetController extends Controller {
         $error = '';
         $categories = $this->assetModel->getCategories();
 
-        // Generate suggested asset tag
-        $suggestedTag = 'AST-' . date('Y') . '-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+        // Generate suggested asset tag (Format: AF-######)
+        $db = \App\Core\Database::getConnection();
+        $maxId = $db->query("SELECT MAX(id) FROM assets")->fetchColumn() ?: 0;
+        $suggestedTag = 'AF-' . str_pad($maxId + 1, 6, '0', STR_PAD_LEFT);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->validateCSRF();
@@ -102,7 +111,6 @@ class AssetController extends Controller {
 
             // Process New Category Name if provided
             if (empty($categoryId) && !empty($newCatName)) {
-                $db = \App\Core\Database::getConnection();
                 $chkCat = $db->prepare("SELECT id FROM asset_categories WHERE name = ?");
                 $chkCat->execute([$newCatName]);
                 $existingCatId = $chkCat->fetchColumn();
@@ -121,7 +129,6 @@ class AssetController extends Controller {
                 $error = 'Please fill in all required fields (select a category or enter a new one).';
             } else {
                 // Validate unique tag and serial
-                $db = \App\Core\Database::getConnection();
                 $chk1 = $db->prepare("SELECT id FROM assets WHERE asset_tag = ?");
                 $chk1->execute([$tag]);
                 
@@ -136,6 +143,39 @@ class AssetController extends Controller {
                     $newId = $this->assetModel->create($tag, $categoryId, $name, $model, $serial, $purchaseDate, $cost, $deprecRate, $status, $location);
                     if ($newId) {
                         $userId = Session::getUserId();
+                        
+                        // Handle photo upload
+                        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                            if (in_array($ext, ['png', 'jpg', 'jpeg'])) {
+                                $photoName = 'photo_' . $newId . '_' . time() . '.' . $ext;
+                                $photoDest = dirname(dirname(__DIR__)) . '/public/uploads/' . $photoName;
+                                if (move_uploaded_file($_FILES['photo']['tmp_name'], $photoDest)) {
+                                    $photoPath = 'uploads/' . $photoName;
+                                    $db->prepare("UPDATE assets SET photo_path = ? WHERE id = ?")->execute([$photoPath, $newId]);
+                                }
+                            }
+                        }
+
+                        // Handle receipts/manual documents uploads
+                        if (isset($_FILES['documents']) && is_array($_FILES['documents']['name'])) {
+                            for ($i = 0; $i < count($_FILES['documents']['name']); $i++) {
+                                if ($_FILES['documents']['error'][$i] === UPLOAD_ERR_OK) {
+                                    $origName = $_FILES['documents']['name'][$i];
+                                    $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+                                    if (in_array($ext, ALLOWED_DOC_EXTENSIONS)) {
+                                        $docName = 'doc_' . $newId . '_' . $i . '_' . time() . '.' . $ext;
+                                        $docDest = dirname(dirname(__DIR__)) . '/public/uploads/' . $docName;
+                                        if (move_uploaded_file($_FILES['documents']['tmp_name'][$i], $docDest)) {
+                                            $filePath = 'uploads/' . $docName;
+                                            $db->prepare("INSERT INTO asset_documents (asset_id, document_name, file_path) VALUES (?, ?, ?)")
+                                               ->execute([$newId, $origName, $filePath]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         $this->assetModel->logAction($userId, 'CREATE_ASSET', 'assets', $newId, "Created asset: $name (Tag: $tag)");
                         Session::setFlash('success', 'Asset created successfully.');
                         $this->redirect('/assets/view?id=' . $newId);
@@ -217,6 +257,39 @@ class AssetController extends Controller {
                     $success = $this->assetModel->update($id, $categoryId, $name, $model, $serial, $purchaseDate, $cost, $deprecRate, $status, $location);
                     if ($success) {
                         $userId = Session::getUserId();
+
+                        // Handle photo upload
+                        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                            if (in_array($ext, ['png', 'jpg', 'jpeg'])) {
+                                $photoName = 'photo_' . $id . '_' . time() . '.' . $ext;
+                                $photoDest = dirname(dirname(__DIR__)) . '/public/uploads/' . $photoName;
+                                if (move_uploaded_file($_FILES['photo']['tmp_name'], $photoDest)) {
+                                    $photoPath = 'uploads/' . $photoName;
+                                    $db->prepare("UPDATE assets SET photo_path = ? WHERE id = ?")->execute([$photoPath, $id]);
+                                }
+                            }
+                        }
+
+                        // Handle receipts/manual documents uploads
+                        if (isset($_FILES['documents']) && is_array($_FILES['documents']['name'])) {
+                            for ($i = 0; $i < count($_FILES['documents']['name']); $i++) {
+                                if ($_FILES['documents']['error'][$i] === UPLOAD_ERR_OK) {
+                                    $origName = $_FILES['documents']['name'][$i];
+                                    $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+                                    if (in_array($ext, ALLOWED_DOC_EXTENSIONS)) {
+                                        $docName = 'doc_' . $id . '_' . $i . '_' . time() . '.' . $ext;
+                                        $docDest = dirname(dirname(__DIR__)) . '/public/uploads/' . $docName;
+                                        if (move_uploaded_file($_FILES['documents']['tmp_name'][$i], $docDest)) {
+                                            $filePath = 'uploads/' . $docName;
+                                            $db->prepare("INSERT INTO asset_documents (asset_id, document_name, file_path) VALUES (?, ?, ?)")
+                                               ->execute([$id, $origName, $filePath]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         $this->assetModel->logAction($userId, 'UPDATE_ASSET', 'assets', $id, "Updated asset: $name (Tag: {$asset['asset_tag']})");
                         Session::setFlash('success', 'Asset details updated successfully.');
                         $this->redirect('/assets/view?id=' . $id);
