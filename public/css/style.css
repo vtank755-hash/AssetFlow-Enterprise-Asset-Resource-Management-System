@@ -430,3 +430,20 @@ details.css-dropdown .dropdown-menu-css button:hover {
     }
 }
 
+/* Automatic Column Wrapping for Names/Titles on Mobile */
+@media (max-width: 768px) {
+    .table td:nth-child(2),
+    .table th:nth-child(2) {
+        white-space: normal !important;
+        min-width: 160px;
+    }
+    
+    /* Allow wrapping for column 1 in utilization report */
+    .table-responsive table[data-report="utilization"] td:nth-child(1),
+    .table-responsive table[data-report="utilization"] th:nth-child(1) {
+        white-space: normal !important;
+        min-width: 150px;
+    }
+}
+
+

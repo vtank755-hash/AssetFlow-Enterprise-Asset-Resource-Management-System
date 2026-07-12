@@ -10,24 +10,7 @@ abstract class Controller {
      * @return void
      */
     protected function view($view, $data = []) {
-        // Expose keys as variables
-        extract($data);
-
-        $viewFile = dirname(__DIR__) . '/views/' . $view . '.php';
-
-        if (!file_exists($viewFile)) {
-            die("System Error: View file [{$view}] does not exist at path [{$viewFile}].");
-        }
-
-        // Determine if page should bypass standard administrative layouts (e.g. login/reset screens)
-        if (isset($data['no_layout']) && $data['no_layout'] === true) {
-            require $viewFile;
-        } else {
-            require dirname(__DIR__) . '/views/layouts/header.php';
-            require dirname(__DIR__) . '/views/layouts/sidebar.php';
-            require $viewFile;
-            require dirname(__DIR__) . '/views/layouts/footer.php';
-        }
+        View::render($view, $data);
     }
 
     /**
