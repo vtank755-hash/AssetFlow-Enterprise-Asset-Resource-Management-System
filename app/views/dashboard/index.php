@@ -261,19 +261,22 @@ use App\Core\Session;
                                     $maxVal = $item['value'];
                                 }
                             }
+                            // Scale baseline max to at least 5 for better proportions
+                            $scaleMax = max(5, $maxVal);
+                            
                             foreach ($chartData['utilization'] as $item): 
-                                $pct = ($item['value'] / $maxVal) * 100;
+                                $pct = ($item['value'] / $scaleMax) * 100;
                             ?>
-                                <div class="d-flex flex-column align-items-center" style="height: 100%; width: 60px;">
+                                <div class="d-flex flex-column align-items-center" style="height: 100%; width: 100px;">
                                     <!-- Dynamic bar height from value -->
-                                    <div class="bg-indigo rounded-top shadow-sm w-50 position-relative bar-hover" 
-                                         style="height: <?php echo max(10, $pct * 0.8); ?>%; background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%) !important;"
+                                    <div class="bg-indigo w-25 position-relative bar-hover" 
+                                         style="height: <?php echo max(5, $pct); ?>%; background: #6366f1 !important; border-radius: 4px 4px 0 0;"
                                          title="Allocations: <?php echo $item['value']; ?>">
                                         <span class="position-absolute top-0 start-50 translate-middle-x bg-dark text-white rounded px-1.5 py-0.5 small shadow-sm d-none bar-tooltip" style="margin-top: -30px; font-size: 10px; z-index: 10;">
                                             <?php echo $item['value']; ?>
                                         </span>
                                     </div>
-                                    <span class="text-muted text-center text-truncate small mt-2 w-100" style="font-size: 10.5px; font-weight: 500;" title="<?php echo htmlspecialchars($item['label']); ?>">
+                                    <span class="text-muted text-center small mt-2 w-100" style="font-size: 11px; font-weight: 500; white-space: normal; line-height: 1.2;" title="<?php echo htmlspecialchars($item['label']); ?>">
                                         <?php echo htmlspecialchars($item['label']); ?>
                                     </span>
                                 </div>

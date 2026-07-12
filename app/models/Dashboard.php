@@ -131,30 +131,58 @@ class Dashboard extends Model {
         ");
         $data['utilization'] = $deptQuery->fetchAll();
 
-        // 2. Maintenance Frequency Chart Data
+        // 2. Maintenance Frequency Chart Data (Consecutive last 6 months backfilled)
+        $maintData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthM = date('M', strtotime("-$i months"));
+            $monthKey = date('Y-m', strtotime("-$i months"));
+            $maintData[$monthKey] = [
+                'label' => $monthM,
+                'value' => 0
+            ];
+        }
+
+        // Query database for actual maintenance ticket counts in these months
         $maintQuery = $this->db->query("
-            SELECT DATE_FORMAT(created_at, '%b') as label, COUNT(*) as value
+            SELECT DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as value
             FROM maintenance_requests
             WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-            ORDER BY created_at ASC
         ");
         $dbMaint = $maintQuery->fetchAll();
 
-        // Fallback default months if no data in DB
-        if (empty($dbMaint)) {
-            $data['maintenance'] = [
-                ['label' => 'Jan', 'value' => 2],
-                ['label' => 'Feb', 'value' => 5],
-                ['label' => 'Mar', 'value' => 3],
-                ['label' => 'Apr', 'value' => 7],
-                ['label' => 'May', 'value' => 4],
-                ['label' => 'Jun', 'value' => 9]
-            ];
-        } else {
-            $data['maintenance'] = $dbMaint;
+        foreach ($dbMaint as $row) {
+            $key = $row['month_key'];
+            if (isset($maintData[$key])) {
+                $maintData[$key]['value'] = (int)$row['value'];
+            }
         }
 
+        // For demonstration, if all values are zero, provide default mock trends
+        $allZero = true;
+        foreach ($maintData as $m) {
+            if ($m['value'] > 0) {
+                $allZero = false;
+                break;
+            }
+        }
+
+        if ($allZero) {
+            $mockData = [
+                'Jan' => 2, 'Feb' => 5, 'Mar' => 3, 'Apr' => 7, 'May' => 4, 'Jun' => 9
+            ];
+            $idx = 0;
+            foreach ($maintData as $key => $m) {
+                $lbl = $m['label'];
+                if (isset($mockData[$lbl])) {
+                    $maintData[$key]['value'] = $mockData[$lbl];
+                } else {
+                    $maintData[$key]['value'] = ++$idx * 2;
+                }
+            }
+        }
+
+        $data['maintenance'] = array_values($maintData);
         return $data;
     }
 }
