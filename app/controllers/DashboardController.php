@@ -42,6 +42,7 @@ class DashboardController extends Controller {
             $stats = $this->dashboardModel->getAdminStats();
             $recentActivities = $this->dashboardModel->getRecentActivities(5);
             $totalAssets = $stats['total_assets'];
+            $chartData = $this->dashboardModel->getChartData();
         }
 
         $this->view('dashboard/index', [
@@ -51,7 +52,8 @@ class DashboardController extends Controller {
             'recentActivities' => $recentActivities,
             'recentNotifications' => $recentNotifications,
             'staffAssignedAssets' => $staffAssignedAssets,
-            'totalAssets' => $totalAssets
+            'totalAssets' => $totalAssets,
+            'chartData' => $chartData
         ]);
     }
 

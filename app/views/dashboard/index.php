@@ -244,6 +244,107 @@ use App\Core\Session;
             </div>
         </div>
 
+        <!-- Row 2.5: Dynamic Charts (No-JS HTML/SVG fallback) -->
+        <div class="row g-4 mb-4 animate-fade-in" style="animation-delay: 0.15s;">
+            <!-- Department Utilization Bar Chart -->
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-bar-chart-fill text-indigo me-2"></i>Utilization by Department</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="d-flex align-items-end justify-content-around bg-light rounded p-3 mb-3 border border-secondary-subtle" style="height: 180px;">
+                            <?php 
+                            $maxVal = 1;
+                            foreach ($chartData['utilization'] as $item) {
+                                if ($item['value'] > $maxVal) {
+                                    $maxVal = $item['value'];
+                                }
+                            }
+                            foreach ($chartData['utilization'] as $item): 
+                                $pct = ($item['value'] / $maxVal) * 100;
+                            ?>
+                                <div class="d-flex flex-column align-items-center" style="height: 100%; width: 60px;">
+                                    <!-- Dynamic bar height from value -->
+                                    <div class="bg-indigo rounded-top shadow-sm w-50 position-relative bar-hover" 
+                                         style="height: <?php echo max(10, $pct * 0.8); ?>%; background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%) !important;"
+                                         title="Allocations: <?php echo $item['value']; ?>">
+                                        <span class="position-absolute top-0 start-50 translate-middle-x bg-dark text-white rounded px-1.5 py-0.5 small shadow-sm d-none bar-tooltip" style="margin-top: -30px; font-size: 10px; z-index: 10;">
+                                            <?php echo $item['value']; ?>
+                                        </span>
+                                    </div>
+                                    <span class="text-muted text-center text-truncate small mt-2 w-100" style="font-size: 10.5px; font-weight: 500;" title="<?php echo htmlspecialchars($item['label']); ?>">
+                                        <?php echo htmlspecialchars($item['label']); ?>
+                                    </span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1.5"></i>Live checked out allocations count per department.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Frequency Line Chart -->
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-graph-up text-indigo me-2"></i>Maintenance Frequency</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="bg-light rounded p-3 mb-3 border border-secondary-subtle d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <?php
+                            $maintData = $chartData['maintenance'];
+                            $maxMaint = 1;
+                            foreach ($maintData as $item) {
+                                if ($item['value'] > $maxMaint) {
+                                    $maxMaint = $item['value'];
+                                }
+                            }
+                            $points = [];
+                            $width = 440;
+                            $height = 140;
+                            $paddingX = 40;
+                            $paddingY = 25;
+                            $count = count($maintData);
+                            $stepX = $count > 1 ? ($width - 2 * $paddingX) / ($count - 1) : 0;
+                            
+                            for ($i = 0; $i < $count; $i++) {
+                                $x = $paddingX + $i * $stepX;
+                                $ratio = $maintData[$i]['value'] / $maxMaint;
+                                $y = $height - $paddingY - $ratio * ($height - 2 * $paddingY);
+                                $points[] = "$x,$y";
+                            }
+                            $pointsString = implode(' ', $points);
+                            ?>
+                            <svg viewBox="0 0 <?php echo $width; ?> <?php echo $height; ?>" class="w-100 h-100" style="overflow: visible;">
+                                <!-- Grid line bottom baseline -->
+                                <line x1="<?php echo $paddingX; ?>" y1="<?php echo $height - $paddingY; ?>" x2="<?php echo $width - $paddingX; ?>" y2="<?php echo $height - $paddingY; ?>" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3,3" />
+                                
+                                <!-- Trend Line -->
+                                <polyline fill="none" stroke="#f43f5e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" points="<?php echo $pointsString; ?>" />
+                                
+                                <!-- Markers -->
+                                <?php foreach ($points as $idx => $pt): 
+                                    list($px, $py) = explode(',', $pt);
+                                ?>
+                                    <circle cx="<?php echo $px; ?>" cy="<?php echo $py; ?>" r="5" fill="#f43f5e" stroke="#ffffff" stroke-width="1.5" class="chart-marker" />
+                                    <!-- Value indicator -->
+                                    <text x="<?php echo $px; ?>" y="<?php echo $py - 12; ?>" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f172a" font-family="'Outfit', sans-serif">
+                                        <?php echo $maintData[$idx]['value']; ?>
+                                    </text>
+                                    <!-- X-axis Label -->
+                                    <text x="<?php echo $px; ?>" y="<?php echo $height - 5; ?>" text-anchor="middle" font-size="10.5" font-weight="600" fill="#64748b" font-family="'Outfit', sans-serif">
+                                        <?php echo htmlspecialchars($maintData[$idx]['label']); ?>
+                                    </text>
+                                <?php endforeach; ?>
+                            </svg>
+                        </div>
+                        <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1.5"></i>Number of work orders logged per month for the last 6 months.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Row 3: Actionable Content columns -->
         <div class="row g-4">
             <!-- Left Side Actions & Audit -->

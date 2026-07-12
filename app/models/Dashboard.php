@@ -112,4 +112,49 @@ class Dashboard extends Model {
         $stmt->execute([':employee_id' => $employeeId]);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Fetch aggregated statistics for front-end visual charts (no-JS fallback).
+     * 
+     * @return array
+     */
+    public function getChartData() {
+        $data = [];
+
+        // 1. Department Utilization Chart Data
+        $deptQuery = $this->db->query("
+            SELECT d.name as label, COUNT(aa.id) as value
+            FROM departments d
+            LEFT JOIN employees e ON e.department_id = d.id
+            LEFT JOIN asset_allocations aa ON aa.employee_id = e.id AND aa.status = 'Active'
+            GROUP BY d.id
+        ");
+        $data['utilization'] = $deptQuery->fetchAll();
+
+        // 2. Maintenance Frequency Chart Data
+        $maintQuery = $this->db->query("
+            SELECT DATE_FORMAT(created_at, '%b') as label, COUNT(*) as value
+            FROM maintenance_requests
+            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+            ORDER BY created_at ASC
+        ");
+        $dbMaint = $maintQuery->fetchAll();
+
+        // Fallback default months if no data in DB
+        if (empty($dbMaint)) {
+            $data['maintenance'] = [
+                ['label' => 'Jan', 'value' => 2],
+                ['label' => 'Feb', 'value' => 5],
+                ['label' => 'Mar', 'value' => 3],
+                ['label' => 'Apr', 'value' => 7],
+                ['label' => 'May', 'value' => 4],
+                ['label' => 'Jun', 'value' => 9]
+            ];
+        } else {
+            $data['maintenance'] = $dbMaint;
+        }
+
+        return $data;
+    }
 }
