@@ -5,9 +5,14 @@
             <h1 class="h3 mt-2 mb-0 fw-bold">Asset Valuation & Depreciation</h1>
             <p class="text-muted mb-0">Financial valuation statement incorporating straight-line depreciation calculations.</p>
         </div>
-        <a href="<?php echo BASE_URL; ?>/reports/export?type=valuation" class="btn btn-outline-success">
-            <i class="bi bi-download me-2"></i>Export CSV
-        </a>
+        <div class="d-flex gap-2 no-print">
+            <button onclick="window.print();" class="btn btn-outline-primary">
+                <i class="bi bi-printer me-2"></i>Print PDF
+            </button>
+            <a href="<?php echo BASE_URL; ?>/reports/export?type=valuation" class="btn btn-outline-success">
+                <i class="bi bi-download me-2"></i>Export CSV
+            </a>
+        </div>
     </div>
 
     <!-- Summary Metrics Card -->

@@ -16,10 +16,10 @@
             <p class="text-muted mb-0">Summary of assets held and total valuation per business division.</p>
         </div>
         <div class="d-flex gap-2">
-            <button onclick="window.print();" class="btn btn-outline-dark">
-                <i class="bi bi-printer me-2"></i>Print Report
+            <button onclick="window.print();" class="btn btn-outline-primary">
+                <i class="bi bi-printer me-2"></i>Print PDF
             </button>
-            <a href="<?php echo BASE_URL; ?>/reports/export?type=department" class="btn btn-primary">
+            <a href="<?php echo BASE_URL; ?>/reports/export?type=department" class="btn btn-outline-success">
                 <i class="bi bi-download me-2"></i>Export CSV
             </a>
         </div>
