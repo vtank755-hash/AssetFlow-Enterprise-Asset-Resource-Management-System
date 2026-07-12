@@ -100,28 +100,39 @@ class AllocationController extends Controller {
      */
     public function return() {
         $this->checkAccess(['Admin', 'Manager']);
-        $allocationId = $_GET['id'] ?? null;
+        $allocationId = $_GET['id'] ?? $_POST['id'] ?? null;
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->validateCSRF();
-            $allocationId = $_POST['id'] ?? null;
-        }
-
         if (!$allocationId) {
             $this->redirect('/allocations');
         }
 
-        $notes = trim($_POST['return_notes'] ?? '');
-        $userId = Session::getUserId();
-
-        $success = $this->allocModel->returnAsset($allocationId, $userId, $notes);
-
-        if ($success) {
-            Session::setFlash('success', 'Asset checked in successfully.');
-        } else {
-            Session::setFlash('danger', 'Failed to process asset check-in.');
+        $allocation = $this->allocModel->getById($allocationId);
+        if (!$allocation) {
+            Session::setFlash('danger', 'Allocation record not found.');
+            $this->redirect('/allocations');
         }
 
-        $this->redirect('/allocations');
+        $error = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->validateCSRF();
+            $notes = trim($_POST['return_notes'] ?? '');
+            $userId = Session::getUserId();
+
+            $success = $this->allocModel->returnAsset($allocationId, $userId, $notes);
+
+            if ($success) {
+                Session::setFlash('success', 'Asset checked in successfully.');
+                $this->redirect('/allocations');
+            } else {
+                $error = 'Failed to process asset check-in.';
+            }
+        }
+
+        $this->view('allocations/return', [
+            'title' => 'Confirm Asset Check-in',
+            'allocation' => $allocation,
+            'error' => $error
+        ]);
     }
 }

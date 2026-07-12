@@ -70,24 +70,9 @@ $role = Session::getRole();
                                     <?php if ($role === 'Admin' || $role === 'Manager'): ?>
                                         <td class="text-end">
                                             <?php if ($alloc['status'] !== 'Returned'): ?>
-                                                <!-- Pure CSS Check-in Form using details tag -->
-                                                <details class="css-dropdown">
-                                                    <summary class="btn btn-sm btn-outline-success py-1 px-2.5">
-                                                        <i class="bi bi-box-arrow-in-down me-1"></i> Check-in
-                                                    </summary>
-                                                    <div class="dropdown-menu-css p-3 text-start" style="right: 0; width: 260px; font-size:13px;">
-                                                        <form action="<?php echo BASE_URL; ?>/allocations/return" method="POST">
-                                                            <input type="hidden" name="csrf_token" value="<?php echo Session::generateCSRFToken(); ?>">
-                                                            <input type="hidden" name="id" value="<?php echo $alloc['id']; ?>">
-                                                            
-                                                            <div class="mb-2">
-                                                                <label for="return_notes_<?php echo $alloc['id']; ?>" class="form-label mb-1 text-dark fw-bold">Return Notes</label>
-                                                                <textarea class="form-control form-control-sm" id="return_notes_<?php echo $alloc['id']; ?>" name="return_notes" rows="2" placeholder="e.g. Good condition, normal wear"></textarea>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-sm btn-success w-100 py-1.5 fw-medium">Confirm Check-in</button>
-                                                        </form>
-                                                    </div>
-                                                </details>
+                                                <a href="<?php echo BASE_URL; ?>/allocations/return?id=<?php echo $alloc['id']; ?>" class="btn btn-sm btn-outline-success py-1 px-2.5">
+                                                    <i class="bi bi-box-arrow-in-down me-1"></i> Check-in
+                                                </a>
                                             <?php else: ?>
                                                 <span class="text-muted small"><i class="bi bi-check2-all text-success me-1"></i>Archived</span>
                                             <?php endif; ?>
