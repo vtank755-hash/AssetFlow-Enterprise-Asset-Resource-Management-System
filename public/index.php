@@ -6,12 +6,14 @@
 // Load configurations
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/constants.php';
+require_once __DIR__ . '/../config/mail.php';
+require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../config/autoload.php';
 
 // Load Composer Autoloader
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
-} else {
-    die("System Error: Dependencies not installed. Please run 'composer install'.");
 }
 
 use App\Core\Router;
