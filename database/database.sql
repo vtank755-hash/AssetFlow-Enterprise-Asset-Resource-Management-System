@@ -58,6 +58,8 @@ CREATE TABLE `employees` (
   `email` VARCHAR(150) NOT NULL UNIQUE,
   `password_hash` VARCHAR(255) NOT NULL,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
+  `profile_picture` VARCHAR(255) DEFAULT NULL,
+  `preferences` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT,

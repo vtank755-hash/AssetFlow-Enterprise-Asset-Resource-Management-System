@@ -134,4 +134,34 @@ class User extends Model {
             ':password_hash' => $passwordHash
         ]);
     }
+
+    /**
+     * Update user profile picture path.
+     */
+    public function updateProfilePicture($id, $filename) {
+        $stmt = $this->db->prepare("
+            UPDATE employees 
+            SET profile_picture = :pic 
+            WHERE id = :id
+        ");
+        return $stmt->execute([
+            ':pic' => $filename,
+            ':id' => $id
+        ]);
+    }
+
+    /**
+     * Update user system preferences.
+     */
+    public function updatePreferences($id, $preferencesJson) {
+        $stmt = $this->db->prepare("
+            UPDATE employees 
+            SET preferences = :pref 
+            WHERE id = :id
+        ");
+        return $stmt->execute([
+            ':pref' => $preferencesJson,
+            ':id' => $id
+        ]);
+    }
 }

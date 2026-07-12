@@ -128,7 +128,7 @@ class UserController extends Controller {
     }
 
     /**
-     * Manage logged-in user profile details (All Roles)
+     * Manage logged-in user profile details, password changes, avatars, and preferences (All Roles)
      */
     public function profile() {
         $this->checkAccess();
@@ -136,53 +136,126 @@ class UserController extends Controller {
         
         $user = $this->userModel->getById($id);
         $error = '';
+        $successMsg = '';
+
+        // Decode preferences
+        $preferences = json_decode($user['preferences'] ?? '', true) ?: [
+            'theme' => 'light',
+            'email_alerts' => 'yes'
+        ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->validateCSRF();
-            $name = trim($_POST['name'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $password = $_POST['password'] ?? '';
-            $confirmPassword = $_POST['confirm_password'] ?? '';
+            $action = $_POST['action'] ?? '';
 
-            if (empty($name) || empty($email)) {
-                $error = 'Name and email are required fields.';
-            } else {
-                $duplicate = $this->userModel->getByEmail($email);
-                if ($duplicate && (int)$duplicate['id'] !== (int)$id) {
-                    $error = 'The email address is already in use by another user.';
+            if ($action === 'update_profile') {
+                $name = trim($_POST['name'] ?? '');
+                $email = trim($_POST['email'] ?? '');
+
+                if (empty($name) || empty($email)) {
+                    $error = 'Name and email are required fields.';
                 } else {
-                    // Update profile details (role and status cannot be updated from user side)
-                    $success = $this->userModel->update($id, $name, $email, $user['role'], $user['status']);
-                    
-                    if (!empty($password)) {
-                        if (strlen($password) < 8) {
-                            $error = 'New password must be at least 8 characters long.';
-                        } elseif ($password !== $confirmPassword) {
-                            $error = 'Password confirmation does not match.';
+                    $duplicate = $this->userModel->getByEmail($email);
+                    if ($duplicate && (int)$duplicate['id'] !== (int)$id) {
+                        $error = 'The email address is already in use by another account.';
+                    } else {
+                        if ($this->userModel->update($id, $name, $email, $user['role'], $user['status'])) {
+                            Session::set('user_name', $name);
+                            Session::set('user_email', $email);
+                            $user['name'] = $name;
+                            $user['email'] = $email;
+                            $successMsg = 'Profile details updated successfully.';
+                            $this->userModel->logAction($id, 'UPDATE_PROFILE', 'employees', $id, "Updated profile details.");
                         } else {
-                            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-                            $this->userModel->updatePassword($id, $passwordHash);
+                            $error = 'Failed to update profile details.';
                         }
                     }
+                }
+            } elseif ($action === 'change_password') {
+                $currentPassword = $_POST['current_password'] ?? '';
+                $newPassword = $_POST['new_password'] ?? '';
+                $confirmPassword = $_POST['confirm_password'] ?? '';
 
-                    if ($success && empty($error)) {
-                        Session::set('user_name', $name);
-                        Session::set('user_email', $email);
-                        $this->userModel->logAction($id, 'UPDATE_PROFILE', 'users', $id, "User updated their own profile.");
-                        Session::setFlash('success', 'Your profile has been updated successfully.');
-                        $this->redirect('/profile');
-                    } elseif (empty($error)) {
-                        $error = 'Failed to update profile details.';
+                if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+                    $error = 'All password fields are required.';
+                } elseif (!password_verify($currentPassword, $user['password_hash'])) {
+                    $error = 'Your current password is incorrect.';
+                } elseif (strlen($newPassword) < 8) {
+                    $error = 'New password must be at least 8 characters long.';
+                } elseif ($newPassword !== $confirmPassword) {
+                    $error = 'New password and confirmation do not match.';
+                } else {
+                    $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+                    if ($this->userModel->updatePassword($id, $passwordHash)) {
+                        $successMsg = 'Password changed successfully.';
+                        $this->userModel->logAction($id, 'CHANGE_PASSWORD', 'employees', $id, "Changed account password.");
+                    } else {
+                        $error = 'Failed to update account password.';
                     }
+                }
+            } elseif ($action === 'upload_avatar') {
+                if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+                    $fileTmpPath = $_FILES['profile_pic']['tmp_name'];
+                    $fileName = $_FILES['profile_pic']['name'];
+                    $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                    
+                    if (in_array($fileExtension, $allowedExtensions)) {
+                        // Create upload dir if not exists
+                        $uploadDir = dirname(dirname(__DIR__)) . '/public/uploads/profile_pics/';
+                        if (!is_dir($uploadDir)) {
+                            mkdir($uploadDir, 0755, true);
+                        }
+
+                        $newFileName = 'avatar_' . $id . '_' . time() . '.' . $fileExtension;
+                        $destPath = $uploadDir . $newFileName;
+
+                        if (move_uploaded_file($fileTmpPath, $destPath)) {
+                            // Delete old picture if exists
+                            if ($user['profile_picture'] && file_exists($uploadDir . $user['profile_picture'])) {
+                                @unlink($uploadDir . $user['profile_picture']);
+                            }
+                            
+                            $this->userModel->updateProfilePicture($id, $newFileName);
+                            $user['profile_picture'] = $newFileName;
+                            Session::set('user_avatar', $newFileName);
+                            $successMsg = 'Profile picture updated successfully.';
+                            $this->userModel->logAction($id, 'UPLOAD_AVATAR', 'employees', $id, "Uploaded profile avatar.");
+                        } else {
+                            $error = 'Failed to save uploaded image file.';
+                        }
+                    } else {
+                        $error = 'Invalid image file format. Allowed extensions: JPG, JPEG, PNG, GIF.';
+                    }
+                } else {
+                    $error = 'No file uploaded or error during upload.';
+                }
+            } elseif ($action === 'update_preferences') {
+                $theme = $_POST['theme'] ?? 'light';
+                $emailAlerts = $_POST['email_alerts'] ?? 'no';
+
+                $preferences = [
+                    'theme' => $theme,
+                    'email_alerts' => $emailAlerts
+                ];
+
+                $prefJson = json_encode($preferences);
+                if ($this->userModel->updatePreferences($id, $prefJson)) {
+                    Session::set('user_theme', $theme);
+                    $successMsg = 'Preferences saved successfully.';
+                    $this->userModel->logAction($id, 'UPDATE_PREFERENCES', 'employees', $id, "Updated preferences.");
+                } else {
+                    $error = 'Failed to save preferences settings.';
                 }
             }
         }
 
-        $this->view('users/edit', [
-            'title' => 'My Account Profile',
+        $this->view('users/profile', [
+            'title' => 'My Account Settings',
             'user' => $user,
+            'preferences' => $preferences,
             'error' => $error,
-            'is_profile' => true
+            'success' => $successMsg
         ]);
     }
 }
