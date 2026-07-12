@@ -1,0 +1,354 @@
+/**
+ * AssetFlow Premium Custom CSS Styling
+ * Overrides Bootstrap 5 for a custom, state-of-the-art enterprise appearance.
+ * Integrates zero-JavaScript interactive CSS behaviors (dropdowns, accordions, tabs).
+ */
+
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-bg: #f8fafc;
+    --sidebar-bg: #0f172a;
+    --sidebar-hover: #1e293b;
+    --accent-color: #6366f1;
+    --accent-hover: #4f46e5;
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 5px -1px rgba(0, 0, 0, 0.03);
+    --hover-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* Layout Setup */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+#sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background: var(--sidebar-bg);
+    color: #fff;
+    transition: var(--hover-transition);
+    position: relative;
+    z-index: 100;
+}
+
+#sidebar .sidebar-header {
+    padding: 24px 20px;
+    background: #0b0f19;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#sidebar .sidebar-header h3 {
+    margin-bottom: 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 12px 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: var(--hover-transition);
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+#sidebar ul li a i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: var(--sidebar-hover);
+    border-left-color: var(--accent-color);
+}
+
+#sidebar ul li.active > a {
+    color: #fff;
+    background: var(--sidebar-hover);
+    border-left-color: var(--accent-color);
+}
+
+/* Main Content Area */
+#content {
+    width: 100%;
+    padding: 30px;
+    min-height: 100vh;
+    transition: var(--hover-transition);
+}
+
+/* Card Enhancements */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: var(--hover-transition);
+    background: #fff;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 10px -6px rgba(99, 102, 241, 0.05);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 18px 24px;
+    font-weight: 600;
+    font-size: 17px;
+}
+
+/* Tables styling */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    background: #fff;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Buttons Styling */
+.btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: var(--hover-transition);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+}
+
+/* Forms styling */
+.form-control, .form-select {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 15px;
+    transition: var(--hover-transition);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+/* Pure CSS Dropdown (using <details> & <summary>) */
+details.css-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+details.css-dropdown summary {
+    list-style: none;
+    cursor: pointer;
+    outline: none;
+}
+
+details.css-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+details.css-dropdown .dropdown-menu-css {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 1000;
+    display: none;
+    min-width: 160px;
+    padding: 8px 0;
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--text-main);
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+details.css-dropdown[open] .dropdown-menu-css {
+    display: block;
+}
+
+details.css-dropdown[open] summary::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    cursor: default;
+}
+
+details.css-dropdown .dropdown-menu-css a,
+details.css-dropdown .dropdown-menu-css button {
+    position: relative;
+    z-index: 1000;
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    clear: both;
+    font-weight: 400;
+    color: var(--text-main);
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    transition: var(--hover-transition);
+}
+
+details.css-dropdown .dropdown-menu-css a:hover,
+details.css-dropdown .dropdown-menu-css button:hover {
+    background-color: #f1f5f9;
+    color: var(--accent-color);
+}
+
+/* Glassmorphism Auth Container */
+.auth-bg {
+    background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, rgba(6, 182, 212, 0.05) 90.2%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+}
+
+/* Custom Alert Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    letter-spacing: 0.3px;
+}
+
+.status-available { background-color: #d1fae5; color: #065f46; }
+.status-allocated { background-color: #dbeafe; color: #1e40af; }
+.status-maintenance { background-color: #fef3c7; color: #92400e; }
+.status-disposed { background-color: #fee2e2; color: #991b1b; }
+
+.status-active { background-color: #d1fae5; color: #065f46; }
+.status-returned { background-color: #f1f5f9; color: #475569; }
+.status-overdue { background-color: #fee2e2; color: #991b1b; }
+
+.status-pending { background-color: #fef3c7; color: #92400e; }
+.status-inprogress { background-color: #dbeafe; color: #1e40af; }
+.status-completed { background-color: #d1fae5; color: #065f46; }
+.status-cancelled { background-color: #fee2e2; color: #991b1b; }
+
+/* CSS bar chart */
+.css-chart-bar-container {
+    background-color: #f1f5f9;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.css-chart-bar {
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+}
+
+/* Details and tabs layout */
+.details-tab-nav {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.details-tab-link {
+    padding: 12px 20px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: var(--hover-transition);
+}
+
+.details-tab-link:hover {
+    color: var(--accent-color);
+}
+
+.details-tab-link.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}

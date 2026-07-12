@@ -1,0 +1,113 @@
+<?php
+use App\Core\Session;
+
+// Determine current request path for setting the active state on sidebar links
+$currentUri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+if (BASE_URL !== '') {
+    $currentUri = trim(str_replace(trim(BASE_URL, '/'), '', $currentUri), '/');
+}
+// Default to dashboard
+if ($currentUri === '') {
+    $currentUri = 'dashboard';
+}
+
+$role = Session::getRole();
+$userName = Session::getUserName();
+?>
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <h3><i class="bi bi-cpu text-indigo me-2"></i>AssetFlow</h3>
+    </div>
+
+    <ul class="list-unstyled components">
+        <li class="<?php echo $currentUri === 'dashboard' ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/dashboard">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </li>
+        <li class="<?php echo (strpos($currentUri, 'assets') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/assets">
+                <i class="bi bi-box-seam"></i> Assets
+            </a>
+        </li>
+        <li class="<?php echo (strpos($currentUri, 'allocations') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/allocations">
+                <i class="bi bi-arrow-left-right"></i> Allocations
+            </a>
+        </li>
+        <li class="<?php echo (strpos($currentUri, 'maintenance') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/maintenance">
+                <i class="bi bi-wrench"></i> Maintenance
+            </a>
+        </li>
+        <li class="<?php echo (strpos($currentUri, 'inventory') === 0) ? 'active' : ''; ?>">
+            <a href="<?php echo BASE_URL; ?>/inventory">
+                <i class="bi bi-journal-text"></i> Inventory
+            </a>
+        </li>
+        
+        <?php if ($role === 'Admin' || $role === 'Manager'): ?>
+            <li class="<?php echo (strpos($currentUri, 'reports') === 0) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/reports">
+                    <i class="bi bi-bar-chart-line"></i> Reports
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if ($role === 'Admin'): ?>
+            <li class="<?php echo (strpos($currentUri, 'users') === 0) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/users">
+                    <i class="bi bi-people"></i> Users CRUD
+                </a>
+            </li>
+        <?php endif; ?>
+    </ul>
+
+    <!-- Bottom User Bar -->
+    <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 15px 20px; background: #0b0f19;">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="overflow-hidden me-2">
+                <p class="mb-0 text-white fw-bold text-truncate" style="font-size: 14px;"><?php echo htmlspecialchars($userName); ?></p>
+                <span class="badge bg-secondary" style="font-size: 10px;"><?php echo htmlspecialchars($role); ?></span>
+            </div>
+            
+            <details class="css-dropdown">
+                <summary class="btn btn-sm btn-outline-light border-0 px-2 py-1">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </summary>
+                <div class="dropdown-menu-css" style="bottom: 100%; right: 0; top: auto; margin-bottom: 8px;">
+                    <a href="<?php echo BASE_URL; ?>/profile"><i class="bi bi-person me-2"></i>Profile</a>
+                    <hr class="dropdown-divider my-1" style="background-color: var(--border-color);">
+                    <a href="<?php echo BASE_URL; ?>/auth/logout" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+                </div>
+            </details>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Content Area -->
+<div id="content">
+    <!-- Flash Messages Container -->
+    <div class="container-fluid px-0">
+        <?php if (Session::hasFlash('success')): ?>
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <?php echo Session::getFlash('success'); ?>
+                <a href="?" class="btn-close" aria-label="Close" style="text-decoration:none;"></a>
+            </div>
+        <?php endif; ?>
+        <?php if (Session::hasFlash('danger')): ?>
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?php echo Session::getFlash('danger'); ?>
+                <a href="?" class="btn-close" aria-label="Close" style="text-decoration:none;"></a>
+            </div>
+        <?php endif; ?>
+        <?php if (Session::hasFlash('warning')): ?>
+            <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <?php echo Session::getFlash('warning'); ?>
+                <a href="?" class="btn-close" aria-label="Close" style="text-decoration:none;"></a>
+            </div>
+        <?php endif; ?>
+    </div>

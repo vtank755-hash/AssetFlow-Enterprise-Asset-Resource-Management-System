@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Redirect the root path to public/
+RewriteRule ^$ public/ [L]
+
+# Route all other paths internally to public/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]

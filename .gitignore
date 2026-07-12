@@ -1,0 +1,10 @@
+# Dependency directories
+/vendor/
+
+# User uploads
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# System and logs files
+.DS_Store
+*.log
