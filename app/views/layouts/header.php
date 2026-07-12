@@ -13,3 +13,5 @@
 </head>
 <body>
     <div class="wrapper">
+        <!-- Pure CSS Sidebar Toggle Checkbox -->
+        <input type="checkbox" id="sidebar-toggle" class="d-none">

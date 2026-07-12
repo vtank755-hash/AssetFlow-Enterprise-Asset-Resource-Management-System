@@ -352,3 +352,47 @@ details.css-dropdown .dropdown-menu-css button:hover {
     color: var(--accent-color);
     border-bottom-color: var(--accent-color);
 }
+
+/* Responsive Mobile Sidebar & Layout adjustments (Pure CSS using checkbox hack) */
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        min-width: 260px;
+        max-width: 260px;
+        margin-left: -260px; /* Hide on mobile by default */
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1050;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+    }
+
+    /* When check-box is checked, slide the sidebar in */
+    #sidebar-toggle:checked ~ #sidebar {
+        margin-left: 0;
+    }
+
+    /* Dim and lock content area when sidebar is open */
+    #sidebar-toggle:checked ~ #content {
+        filter: blur(1.5px);
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    #content {
+        padding: 15px;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Enhance scrollable grids on small screens */
+    .table-responsive {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+}

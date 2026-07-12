@@ -16,7 +16,10 @@ $userName = Session::getUserName();
 ?>
 <nav id="sidebar">
     <div class="sidebar-header">
-        <h3><i class="bi bi-cpu text-indigo me-2"></i>AssetFlow</h3>
+        <div class="d-flex align-items-center justify-content-between">
+            <h3 class="mb-0"><i class="bi bi-cpu text-indigo me-2"></i>AssetFlow</h3>
+            <label for="sidebar-toggle" class="btn btn-sm btn-outline-light border-0 d-md-none"><i class="bi bi-x-lg"></i></label>
+        </div>
     </div>
 
     <ul class="list-unstyled components">
@@ -87,6 +90,11 @@ $userName = Session::getUserName();
 
 <!-- Page Content Area -->
 <div id="content">
+    <!-- Responsive Mobile Header (Pure CSS Sidebar Toggle Trigger) -->
+    <div class="d-md-none bg-dark text-white p-3 d-flex align-items-center justify-content-between mb-4 rounded-3 shadow-sm">
+        <h4 class="mb-0 fw-bold"><i class="bi bi-cpu text-indigo me-2"></i>AssetFlow</h4>
+        <label for="sidebar-toggle" class="btn btn-outline-light border-0"><i class="bi bi-list fs-4"></i></label>
+    </div>
     <!-- Flash Messages Container -->
     <div class="container-fluid px-0">
         <?php if (Session::hasFlash('success')): ?>
