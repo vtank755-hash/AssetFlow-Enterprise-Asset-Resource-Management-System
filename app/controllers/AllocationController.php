@@ -69,7 +69,9 @@ class AllocationController extends Controller {
             $dueDate = $_POST['due_date'] ?? '';
             $notes = trim($_POST['notes'] ?? '');
 
-            if (empty($assetId) || empty($userId) || empty($dueDate)) {
+            if (empty($assets)) {
+                $error = 'No available assets are currently in the system inventory. Please register a new asset or complete active return handovers before proceeding.';
+            } elseif (empty($assetId) || empty($userId) || empty($dueDate)) {
                 $error = 'All fields are required.';
             } else {
                 $allocatorId = Session::getUserId();
