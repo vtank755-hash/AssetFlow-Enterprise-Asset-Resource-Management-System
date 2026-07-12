@@ -149,4 +149,131 @@ class Allocation extends Model {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /**
+     * Get pending transfer requests.
+     */
+    public function getPendingTransfers($employeeId = null) {
+        $sql = "
+            SELECT tr.*, a.name as asset_name, a.asset_tag, 
+                   es.name as source_employee, et.name as target_employee, er.name as requester_name
+            FROM transfer_requests tr
+            JOIN assets a ON tr.asset_id = a.id
+            JOIN employees es ON tr.source_employee_id = es.id
+            JOIN employees et ON tr.target_employee_id = et.id
+            JOIN employees er ON tr.requested_by = er.id
+        ";
+        $params = [];
+        if ($employeeId !== null) {
+            $sql .= " WHERE tr.source_employee_id = :emp OR tr.target_employee_id = :emp";
+            $params[':emp'] = (int)$employeeId;
+        }
+        $sql .= " ORDER BY tr.requested_date DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Create a transfer request.
+     */
+    public function createTransferRequest($assetId, $sourceEmployeeId, $targetEmployeeId, $requestedBy, $notes = '') {
+        $stmt = $this->db->prepare("
+            INSERT INTO transfer_requests (asset_id, source_employee_id, target_employee_id, requested_by, status, requested_date, notes)
+            VALUES (:asset_id, :source_id, :target_id, :req_by, 'Pending', :req_date, :notes)
+        ");
+        return $stmt->execute([
+            ':asset_id' => $assetId,
+            ':source_id' => $sourceEmployeeId,
+            ':target_id' => $targetEmployeeId,
+            ':req_by' => $requestedBy,
+            ':req_date' => date('Y-m-d'),
+            ':notes' => $notes
+        ]);
+    }
+
+    /**
+     * Approve transfer request (Transaction Safe).
+     */
+    public function approveTransferRequest($requestId, $actionBy) {
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Fetch transfer request
+            $stmt = $this->db->prepare("SELECT * FROM transfer_requests WHERE id = ? AND status = 'Pending' FOR UPDATE");
+            $stmt->execute([$requestId]);
+            $req = $stmt->fetch();
+            if (!$req) {
+                throw new Exception("Transfer request not found or not pending.");
+            }
+
+            // 2. Find active allocation of source employee
+            $stmt = $this->db->prepare("
+                SELECT * FROM asset_allocations 
+                WHERE asset_id = ? AND employee_id = ? AND status = 'Active' 
+                LIMIT 1 FOR UPDATE
+            ");
+            $stmt->execute([$req['asset_id'], $req['source_employee_id']]);
+            $alloc = $stmt->fetch();
+
+            $dueDate = date('Y-m-d', strtotime('+30 days')); // Default fallback
+            if ($alloc) {
+                $dueDate = $alloc['due_date'];
+                // Terminate active source allocation
+                $stmt = $this->db->prepare("
+                    UPDATE asset_allocations 
+                    SET returned_date = CURDATE(), status = 'Returned', notes = CONCAT(IFNULL(notes,''), '\n[Transferred to Employee ID ', ?, ']')
+                    WHERE id = ?
+                ");
+                $stmt->execute([$req['target_employee_id'], $alloc['id']]);
+            }
+
+            // 3. Create new active allocation for target employee
+            $stmt = $this->db->prepare("
+                INSERT INTO asset_allocations (asset_id, employee_id, allocated_by, allocated_date, due_date, status, notes)
+                VALUES (:asset_id, :employee_id, :allocated_by, CURDATE(), :due_date, 'Active', :notes)
+            ");
+            $stmt->execute([
+                ':asset_id' => $req['asset_id'],
+                ':employee_id' => $req['target_employee_id'],
+                ':allocated_by' => $actionBy,
+                ':due_date' => $dueDate,
+                ':notes' => 'Custodian transfer approved. Request notes: ' . $req['notes']
+            ]);
+            
+            // 4. Update transfer request status
+            $stmt = $this->db->prepare("
+                UPDATE transfer_requests 
+                SET status = 'Approved', action_date = CURDATE() 
+                WHERE id = ?
+            ");
+            $stmt->execute([$requestId]);
+
+            // 5. Log action
+            $this->logAction($actionBy, 'TRANSFER_ASSET', 'transfer_requests', $requestId, "Approved asset custody transfer ID {$req['asset_id']} to employee ID {$req['target_employee_id']}");
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("Transfer Approval Transaction Failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Cancel/Reject transfer request.
+     */
+    public function rejectTransferRequest($requestId, $actionBy) {
+        $stmt = $this->db->prepare("
+            UPDATE transfer_requests 
+            SET status = 'Cancelled', action_date = CURDATE() 
+            WHERE id = ? AND status = 'Pending'
+        ");
+        $success = $stmt->execute([$requestId]);
+        if ($success) {
+            $this->logAction($actionBy, 'TRANSFER_REJECT', 'transfer_requests', $requestId, "Cancelled transfer request ID {$requestId}");
+        }
+        return $success;
+    }
 }
