@@ -43,7 +43,7 @@ class AssetController extends Controller {
     /**
      * Single Asset Details Page
      */
-    public function view() {
+    public function show() {
         $this->checkAccess();
         $id = $_GET['id'] ?? null;
         if (!$id) {

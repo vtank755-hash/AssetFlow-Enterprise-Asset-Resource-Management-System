@@ -36,7 +36,7 @@ $router->add('dashboard',            'DashboardController@index');
 $router->add('assets',               'AssetController@index');
 $router->add('assets/create',        'AssetController@create');
 $router->add('assets/edit',          'AssetController@edit');
-$router->add('assets/view',          'AssetController@view');
+$router->add('assets/view',          'AssetController@show');
 $router->add('assets/delete',        'AssetController@delete');
 
 // Register Allocation Management Routes
