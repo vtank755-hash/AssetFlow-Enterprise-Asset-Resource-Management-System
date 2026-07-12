@@ -54,7 +54,7 @@ class MaintenanceController extends Controller {
                 if ($successId) {
                     // Record who performed it (Session User ID) in audit log
                     $userId = Session::getUserId();
-                    $this->maintModel->logAction($userId, 'CREATE_WORK_ORDER', 'maintenance_schedules', $successId, "Work order created for asset ID {$assetId}");
+                    $this->maintModel->logAction($userId, 'CREATE_WORK_ORDER', 'maintenance_requests', $successId, "Work order created for asset ID {$assetId}");
                     
                     Session::setFlash('success', 'Maintenance work order scheduled successfully.');
                     $this->redirect('/maintenance');
@@ -107,7 +107,7 @@ class MaintenanceController extends Controller {
                 $success = $this->maintModel->updateWorkOrder($id, $title, $description, $scheduledDate, $completionDate, $cost, $status, $performedBy, $notes);
                 if ($success) {
                     $userId = Session::getUserId();
-                    $this->maintModel->logAction($userId, 'UPDATE_WORK_ORDER', 'maintenance_schedules', $id, "Updated work order ID {$id} to status: {$status}");
+                    $this->maintModel->logAction($userId, 'UPDATE_WORK_ORDER', 'maintenance_requests', $id, "Updated work order ID {$id} to status: {$status}");
                     
                     Session::setFlash('success', 'Maintenance order updated successfully.');
                     $this->redirect('/maintenance');

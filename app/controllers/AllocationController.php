@@ -34,7 +34,7 @@ class AllocationController extends Controller {
                 
                 // Update database status to Overdue if desired
                 $db = \App\Core\Database::getConnection();
-                $stmt = $db->prepare("UPDATE allocations SET status = 'Overdue' WHERE id = ?");
+                $stmt = $db->prepare("UPDATE asset_allocations SET status = 'Overdue' WHERE id = ?");
                 $stmt->execute([$alloc['id']]);
             }
         }
