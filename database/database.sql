@@ -195,7 +195,7 @@ CREATE TABLE `maintenance_requests` (
   `scheduled_date` DATE NOT NULL,
   `completion_date` DATE DEFAULT NULL,
   `cost` DECIMAL(12,2) DEFAULT 0.00,
-  `status` ENUM('Pending', 'In Progress', 'Completed', 'Cancelled') NOT NULL DEFAULT 'Pending',
+  `status` ENUM('Pending', 'Approved', 'Rejected', 'Technician Assigned', 'In Progress', 'Resolved') NOT NULL DEFAULT 'Pending',
   `performed_by` VARCHAR(150) DEFAULT NULL,
   `notes` TEXT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

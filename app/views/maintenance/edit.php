@@ -64,11 +64,13 @@ use App\Core\Session;
                                 <label for="status" class="form-label fw-semibold">Work Order Status <span class="text-danger">*</span></label>
                                 <select class="form-select" id="status" name="status" required>
                                     <option value="Pending" <?php echo $order['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                    <option value="Approved" <?php echo $order['status'] === 'Approved' ? 'selected' : ''; ?>>Approved</option>
+                                    <option value="Rejected" <?php echo $order['status'] === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
+                                    <option value="Technician Assigned" <?php echo $order['status'] === 'Technician Assigned' ? 'selected' : ''; ?>>Technician Assigned</option>
                                     <option value="In Progress" <?php echo $order['status'] === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
-                                    <option value="Completed" <?php echo $order['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
-                                    <option value="Cancelled" <?php echo $order['status'] === 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                    <option value="Resolved" <?php echo $order['status'] === 'Resolved' ? 'selected' : ''; ?>>Resolved</option>
                                 </select>
-                                <div class="form-text">Completing/cancelling the order sets the asset state back to 'Available'.</div>
+                                <div class="form-text">Resolving/rejecting the order sets the asset state back to 'Available'.</div>
                             </div>
                         </div>
 

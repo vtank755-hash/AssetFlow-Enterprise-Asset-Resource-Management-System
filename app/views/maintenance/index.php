@@ -63,11 +63,18 @@ $role = Session::getRole();
                                     </td>
                                     <td class="fw-semibold text-dark">₹<?php echo htmlspecialchars(number_format($order['cost'], 2)); ?></td>
                                     <td>
-                                        <span class="status-badge <?php 
-                                            echo $order['status'] === 'Pending' ? 'status-pending' : 
-                                                ($order['status'] === 'In Progress' ? 'status-inprogress' : 
-                                                ($order['status'] === 'Completed' ? 'status-completed' : 'status-cancelled')); 
-                                        ?>">
+                                        <?php
+                                        $badgeClass = 'bg-secondary text-white';
+                                        switch ($order['status']) {
+                                            case 'Pending': $badgeClass = 'status-pending'; break;
+                                            case 'Approved': $badgeClass = 'bg-info-subtle text-info border border-info-subtle'; break;
+                                            case 'Rejected': $badgeClass = 'bg-danger-subtle text-danger border border-danger-subtle'; break;
+                                            case 'Technician Assigned': $badgeClass = 'bg-primary-subtle text-primary border border-primary-subtle'; break;
+                                            case 'In Progress': $badgeClass = 'status-inprogress'; break;
+                                            case 'Resolved': $badgeClass = 'status-completed'; break;
+                                        }
+                                        ?>
+                                        <span class="status-badge <?php echo $badgeClass; ?>">
                                             <?php echo htmlspecialchars($order['status']); ?>
                                         </span>
                                     </td>

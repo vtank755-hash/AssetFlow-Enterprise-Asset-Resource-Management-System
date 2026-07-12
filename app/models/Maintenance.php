@@ -112,12 +112,12 @@ class Maintenance extends Model {
             ]);
 
             // 3. Conditionally update asset status
-            if ($status === 'Completed' || $status === 'Cancelled') {
-                // Return asset to Available once work completes or cancels
+            if ($status === 'Resolved' || $status === 'Rejected') {
+                // Return asset to Available once resolved or rejected
                 $stmt = $this->db->prepare("UPDATE assets SET status = 'Available' WHERE id = ?");
                 $stmt->execute([$order['asset_id']]);
             } else {
-                // Keep in maintenance state for Pending or In Progress statuses
+                // Keep in maintenance state for Pending, Approved, Tech Assigned, In Progress statuses
                 $stmt = $this->db->prepare("UPDATE assets SET status = 'Maintenance' WHERE id = ?");
                 $stmt->execute([$order['asset_id']]);
             }
