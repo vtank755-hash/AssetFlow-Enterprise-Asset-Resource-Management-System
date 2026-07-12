@@ -3,10 +3,23 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Session;
+use App\Models\Dashboard;
 
+/**
+ * Dashboard Controller
+ * Orchestrates dashboard index rendering, loading statistics, notifications, and logs.
+ */
 class DashboardController extends Controller {
+    private $dashboardModel;
+
+    public function __construct() {
+        $this->dashboardModel = new Dashboard();
+    }
+
     /**
-     * Aggregates stats and renders dashboard home
+     * Aggregates stats and renders dashboard home.
+     * 
+     * @return void
      */
     public function index() {
         $this->checkAccess();
@@ -14,75 +27,31 @@ class DashboardController extends Controller {
         $role = Session::getRole();
         $userId = Session::getUserId();
         
-        $db = \App\Core\Database::getConnection();
-
-        // Standard placeholders
-        $totalAssets = 0;
-        $totalValuation = 0.00;
-        $activeMaintenance = 0;
-        $lowStockCount = 0;
-        $recentAllocations = [];
-        $recentWorkOrders = [];
+        $stats = [];
+        $recentActivities = [];
+        $recentNotifications = [];
         $staffAssignedAssets = [];
 
-        if ($role === 'Staff') {
-            // Staff dashboard: fetch only assets assigned to them
-            $stmt = $db->prepare("
-                SELECT al.*, a.name as asset_name, a.asset_tag, a.location, a.status as asset_status, ab.name as allocator_name
-                FROM asset_allocations al
-                JOIN assets a ON al.asset_id = a.id
-                JOIN employees ab ON al.allocated_by = ab.id
-                WHERE al.employee_id = :employee_id AND al.status = 'Active'
-                ORDER BY al.allocated_date DESC
-            ");
-            $stmt->execute([':employee_id' => $userId]);
-            $staffAssignedAssets = $stmt->fetchAll();
+        // Fetch notifications for the current logged-in employee
+        $recentNotifications = $this->dashboardModel->getRecentNotifications($userId, 5);
 
+        if ($role === 'Staff') {
+            $staffAssignedAssets = $this->dashboardModel->getStaffPossessions($userId);
             $totalAssets = count($staffAssignedAssets);
         } else {
-            // Admin/Manager dashboard: fetch enterprise-wide aggregates
-            // 1. Total Assets count
-            $totalAssets = $db->query("SELECT COUNT(*) FROM assets WHERE status != 'Disposed'")->fetchColumn();
-
-            // 2. Total Valuation
-            $totalValuation = $db->query("SELECT SUM(purchase_cost) FROM assets WHERE status != 'Disposed'")->fetchColumn() ?: 0.00;
-
-            // 3. Maintenance events currently active
-            $activeMaintenance = $db->query("SELECT COUNT(*) FROM assets WHERE status = 'Maintenance'")->fetchColumn();
-
-            // 4. Low stock consumable warning count
-            $lowStockCount = $db->query("SELECT COUNT(*) FROM inventory WHERE quantity < min_threshold")->fetchColumn();
-
-            // 5. Recent 5 allocations
-            $recentAllocations = $db->query("
-                SELECT al.*, a.name as asset_name, a.asset_tag, e.name as user_name
-                FROM asset_allocations al
-                JOIN assets a ON al.asset_id = a.id
-                JOIN employees e ON al.employee_id = e.id
-                ORDER BY al.allocated_date DESC, al.id DESC
-                LIMIT 5
-            ")->fetchAll();
-
-            // 6. Recent 5 maintenance events
-            $recentWorkOrders = $db->query("
-                SELECT m.*, a.name as asset_name, a.asset_tag
-                FROM maintenance_requests m
-                JOIN assets a ON m.asset_id = a.id
-                ORDER BY m.scheduled_date DESC, m.id DESC
-                LIMIT 5
-            ")->fetchAll();
+            $stats = $this->dashboardModel->getAdminStats();
+            $recentActivities = $this->dashboardModel->getRecentActivities(5);
+            $totalAssets = $stats['total_assets'];
         }
 
         $this->view('dashboard/index', [
             'title' => 'Dashboard Overview',
             'role' => $role,
-            'totalAssets' => $totalAssets,
-            'totalValuation' => $totalValuation,
-            'activeMaintenance' => $activeMaintenance,
-            'lowStockCount' => $lowStockCount,
-            'recentAllocations' => $recentAllocations,
-            'recentWorkOrders' => $recentWorkOrders,
-            'staffAssignedAssets' => $staffAssignedAssets
+            'stats' => $stats,
+            'recentActivities' => $recentActivities,
+            'recentNotifications' => $recentNotifications,
+            'staffAssignedAssets' => $staffAssignedAssets,
+            'totalAssets' => $totalAssets
         ]);
     }
 }
