@@ -54,4 +54,14 @@ class DashboardController extends Controller {
             'totalAssets' => $totalAssets
         ]);
     }
+
+    /**
+     * Renders 403 Forbidden page.
+     */
+    public function forbidden() {
+        $this->view('errors/403', [
+            'title' => 'Access Forbidden',
+            'no_layout' => true
+        ]);
+    }
 }

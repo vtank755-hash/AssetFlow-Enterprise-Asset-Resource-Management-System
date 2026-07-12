@@ -33,8 +33,9 @@ $router->add('auth/logout',          'AuthController@logout');
 $router->add('auth/forgot-password', 'AuthController@forgotPassword');
 $router->add('auth/reset-password',  'AuthController@resetPassword');
 
-// Register Dashboard Routes
+// Register Dashboard & Error Routes
 $router->add('dashboard',            'DashboardController@index');
+$router->add('errors/403',           'DashboardController@forbidden');
 
 // Register Asset Management Routes
 $router->add('assets',               'AssetController@index');
