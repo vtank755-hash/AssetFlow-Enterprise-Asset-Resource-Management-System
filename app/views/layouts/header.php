@@ -13,12 +13,12 @@
 </head>
 <body>
     <!-- Fixed Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top no-print" style="z-index: 1040; height: 60px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top no-print" style="z-index: 1040; height: 60px; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);">
         <div class="container-fluid px-3">
             <!-- Mobile Toggle Sidebar Trigger -->
-            <label for="sidebar-toggle" class="btn btn-dark border-0 me-2 d-md-none text-white"><i class="bi bi-list fs-4"></i></label>
+            <label for="sidebar-toggle" class="btn btn-light border-secondary-subtle me-2 d-md-none text-dark"><i class="bi bi-list fs-4"></i></label>
             
-            <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="<?php echo BASE_URL; ?>/dashboard">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-dark" href="<?php echo BASE_URL; ?>/dashboard">
                 <i class="bi bi-cpu text-indigo me-2 fs-4"></i>
                 <span>AssetFlow</span>
             </a>
@@ -27,13 +27,13 @@
                 <!-- Topbar Search form -->
                 <form class="d-none d-sm-flex" action="<?php echo BASE_URL; ?>/assets" method="GET">
                     <div class="input-group input-group-sm">
-                        <input type="text" name="q" class="form-control bg-secondary text-white border-0" placeholder="Search assets..." style="width: 180px;">
-                        <button class="btn btn-outline-light border-0 bg-secondary" type="submit"><i class="bi bi-search"></i></button>
+                        <input type="text" name="q" class="form-control bg-light text-dark border border-secondary-subtle" placeholder="Search assets..." style="width: 180px;">
+                        <button class="btn btn-outline-secondary border border-secondary-subtle" type="submit"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
                 
                 <!-- Notifications Badge Link -->
-                <a href="<?php echo BASE_URL; ?>/notifications" class="text-white position-relative px-2">
+                <a href="<?php echo BASE_URL; ?>/notifications" class="text-dark position-relative px-2">
                     <i class="bi bi-bell fs-5"></i>
                     <?php 
                     $userId = \App\Core\Session::getUserId();
@@ -52,7 +52,7 @@
 
                 <!-- User Profile Dropdown using Details Hack -->
                 <details class="css-dropdown">
-                    <summary class="btn btn-sm btn-outline-light border-0 d-flex align-items-center gap-2">
+                    <summary class="btn btn-sm btn-outline-dark border-0 d-flex align-items-center gap-2">
                         <i class="bi bi-person-circle fs-5"></i>
                         <span class="d-none d-md-inline"><?php echo htmlspecialchars(\App\Core\Session::getUserName() ?? ''); ?></span>
                     </summary>
