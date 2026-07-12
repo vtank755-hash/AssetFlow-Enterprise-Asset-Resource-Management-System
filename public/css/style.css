@@ -446,4 +446,11 @@ details.css-dropdown .dropdown-menu-css button:hover {
     }
 }
 
+/* Prevent dropdown forms inside tables from inheriting white-space: nowrap */
+.dropdown-menu-css,
+.dropdown-menu-css * {
+    white-space: normal !important;
+}
+
+
 
