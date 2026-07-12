@@ -29,13 +29,13 @@ class DashboardController extends Controller {
             // Staff dashboard: fetch only assets assigned to them
             $stmt = $db->prepare("
                 SELECT al.*, a.name as asset_name, a.asset_tag, a.location, a.status as asset_status, ab.name as allocator_name
-                FROM allocations al
+                FROM asset_allocations al
                 JOIN assets a ON al.asset_id = a.id
-                JOIN users ab ON al.allocated_by = ab.id
-                WHERE al.user_id = :user_id AND al.status = 'Active'
+                JOIN employees ab ON al.allocated_by = ab.id
+                WHERE al.employee_id = :employee_id AND al.status = 'Active'
                 ORDER BY al.allocated_date DESC
             ");
-            $stmt->execute([':user_id' => $userId]);
+            $stmt->execute([':employee_id' => $userId]);
             $staffAssignedAssets = $stmt->fetchAll();
 
             $totalAssets = count($staffAssignedAssets);
@@ -55,10 +55,10 @@ class DashboardController extends Controller {
 
             // 5. Recent 5 allocations
             $recentAllocations = $db->query("
-                SELECT al.*, a.name as asset_name, a.asset_tag, u.name as user_name
-                FROM allocations al
+                SELECT al.*, a.name as asset_name, a.asset_tag, e.name as user_name
+                FROM asset_allocations al
                 JOIN assets a ON al.asset_id = a.id
-                JOIN users u ON al.user_id = u.id
+                JOIN employees e ON al.employee_id = e.id
                 ORDER BY al.allocated_date DESC, al.id DESC
                 LIMIT 5
             ")->fetchAll();
@@ -66,7 +66,7 @@ class DashboardController extends Controller {
             // 6. Recent 5 maintenance events
             $recentWorkOrders = $db->query("
                 SELECT m.*, a.name as asset_name, a.asset_tag
-                FROM maintenance_schedules m
+                FROM maintenance_requests m
                 JOIN assets a ON m.asset_id = a.id
                 ORDER BY m.scheduled_date DESC, m.id DESC
                 LIMIT 5

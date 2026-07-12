@@ -53,8 +53,8 @@ class Report extends Model {
                    SUM(m.cost) as total_cost,
                    SUM(CASE WHEN m.completion_date IS NOT NULL THEN DATEDIFF(m.completion_date, m.scheduled_date) ELSE 0 END) as total_downtime_days
             FROM assets a
-            JOIN categories c ON a.category_id = c.id
-            LEFT JOIN maintenance_schedules m ON a.id = m.asset_id AND m.status = 'Completed'
+            JOIN asset_categories c ON a.category_id = c.id
+            LEFT JOIN maintenance_requests m ON a.id = m.asset_id AND m.status = 'Completed'
             GROUP BY a.id
             ORDER BY total_cost DESC
         ");
@@ -72,9 +72,9 @@ class Report extends Model {
                    SUM(CASE WHEN a.status = 'Allocated' THEN 1 ELSE 0 END) as currently_allocated,
                    COUNT(al.id) as total_historical_allocations,
                    ROUND((SUM(CASE WHEN a.status = 'Allocated' THEN 1 ELSE 0 END) / COUNT(a.id)) * 100, 1) as utilization_rate
-            FROM categories c
+            FROM asset_categories c
             JOIN assets a ON a.category_id = c.id
-            LEFT JOIN allocations al ON a.id = al.asset_id
+            LEFT JOIN asset_allocations al ON a.id = al.asset_id
             GROUP BY c.id
             ORDER BY utilization_rate DESC
         ");

@@ -8,22 +8,22 @@ class Allocation extends Model {
     /**
      * Get allocations register list.
      * 
-     * @param int|null $userId Filter by specific custodian (for Staff role)
+     * @param int|null $employeeId Filter by specific custodian (for Staff role)
      * @return array
      */
-    public function getAll($userId = null) {
+    public function getAll($employeeId = null) {
         $sql = "
-            SELECT al.*, a.name as asset_name, a.asset_tag, u.name as user_name, ab.name as allocator_name
-            FROM allocations al
+            SELECT al.*, a.name as asset_name, a.asset_tag, e.name as user_name, ab.name as allocator_name
+            FROM asset_allocations al
             JOIN assets a ON al.asset_id = a.id
-            JOIN users u ON al.user_id = u.id
-            JOIN users ab ON al.allocated_by = ab.id
+            JOIN employees e ON al.employee_id = e.id
+            JOIN employees ab ON al.allocated_by = ab.id
         ";
         $params = [];
 
-        if ($userId !== null) {
-            $sql .= " WHERE al.user_id = :user_id";
-            $params[':user_id'] = (int)$userId;
+        if ($employeeId !== null) {
+            $sql .= " WHERE al.employee_id = :employee_id";
+            $params[':employee_id'] = (int)$employeeId;
         }
 
         $sql .= " ORDER BY al.status ASC, al.due_date ASC, al.allocated_date DESC";
@@ -38,10 +38,10 @@ class Allocation extends Model {
      */
     public function getById($id) {
         $stmt = $this->db->prepare("
-            SELECT al.*, a.name as asset_name, a.asset_tag, u.name as user_name
-            FROM allocations al
+            SELECT al.*, a.name as asset_name, a.asset_tag, e.name as user_name
+            FROM asset_allocations al
             JOIN assets a ON al.asset_id = a.id
-            JOIN users u ON al.user_id = u.id
+            JOIN employees e ON al.employee_id = e.id
             WHERE al.id = :id
             LIMIT 1
         ");
@@ -52,7 +52,7 @@ class Allocation extends Model {
     /**
      * Perform Resource Checkout (Transaction Safe).
      */
-    public function checkout($assetId, $userId, $allocatedBy, $dueDate, $notes = '') {
+    public function checkout($assetId, $employeeId, $allocatedBy, $dueDate, $notes = '') {
         try {
             $this->db->beginTransaction();
 
@@ -67,12 +67,12 @@ class Allocation extends Model {
 
             // 2. Create allocation record
             $stmt = $this->db->prepare("
-                INSERT INTO allocations (asset_id, user_id, allocated_by, allocated_date, due_date, status, notes)
-                VALUES (:asset_id, :user_id, :allocated_by, :allocated_date, :due_date, 'Active', :notes)
+                INSERT INTO asset_allocations (asset_id, employee_id, allocated_by, allocated_date, due_date, status, notes)
+                VALUES (:asset_id, :employee_id, :allocated_by, :allocated_date, :due_date, 'Active', :notes)
             ");
             $stmt->execute([
                 ':asset_id' => $assetId,
-                ':user_id' => $userId,
+                ':employee_id' => $employeeId,
                 ':allocated_by' => $allocatedBy,
                 ':allocated_date' => date('Y-m-d'),
                 ':due_date' => $dueDate,
@@ -85,7 +85,7 @@ class Allocation extends Model {
             $stmt->execute([$assetId]);
 
             // 4. Record Audit Log
-            $this->logAction($allocatedBy, 'CHECKOUT_ASSET', 'allocations', $allocationId, "Checked out asset ID {$assetId} to user ID {$userId}");
+            $this->logAction($allocatedBy, 'CHECKOUT_ASSET', 'asset_allocations', $allocationId, "Checked out asset ID {$assetId} to employee ID {$employeeId}");
 
             $this->db->commit();
             return $allocationId;
@@ -104,7 +104,7 @@ class Allocation extends Model {
             $this->db->beginTransaction();
 
             // 1. Fetch current allocation record
-            $stmt = $this->db->prepare("SELECT * FROM allocations WHERE id = ? FOR UPDATE");
+            $stmt = $this->db->prepare("SELECT * FROM asset_allocations WHERE id = ? FOR UPDATE");
             $stmt->execute([$allocationId]);
             $alloc = $stmt->fetch();
 
@@ -114,7 +114,7 @@ class Allocation extends Model {
 
             // 2. Update allocation row details
             $stmt = $this->db->prepare("
-                UPDATE allocations 
+                UPDATE asset_allocations 
                 SET returned_date = :returned_date, status = 'Returned', notes = CONCAT(IFNULL(notes,''), :note_append) 
                 WHERE id = :id
             ");
@@ -130,7 +130,7 @@ class Allocation extends Model {
             $stmt->execute([$alloc['asset_id']]);
 
             // 4. Log audit details
-            $this->logAction($returnedBy, 'CHECKIN_ASSET', 'allocations', $allocationId, "Returned asset ID {$alloc['asset_id']} from user ID {$alloc['user_id']}");
+            $this->logAction($returnedBy, 'CHECKIN_ASSET', 'asset_allocations', $allocationId, "Returned asset ID {$alloc['asset_id']} from employee ID {$alloc['employee_id']}");
 
             $this->db->commit();
             return true;

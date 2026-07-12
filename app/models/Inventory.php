@@ -103,7 +103,7 @@ class Inventory extends Model {
      */
     private function triggerLowStockNotification($item, $currentQty) {
         // Fetch all Admins and Managers emails
-        $stmt = $this->db->prepare("SELECT email, name FROM users WHERE role IN ('Admin', 'Manager') AND status = 'Active'");
+        $stmt = $this->db->prepare("SELECT email, name FROM employees WHERE role_id IN (1, 2) AND status = 'Active'");
         $stmt->execute();
         $recipients = $stmt->fetchAll();
 

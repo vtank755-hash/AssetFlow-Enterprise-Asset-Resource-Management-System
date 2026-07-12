@@ -10,7 +10,7 @@ class Asset extends Model {
      * @return array
      */
     public function getCategories() {
-        $stmt = $this->db->prepare("SELECT * FROM categories ORDER BY name ASC");
+        $stmt = $this->db->prepare("SELECT * FROM asset_categories ORDER BY name ASC");
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -22,7 +22,7 @@ class Asset extends Model {
         $sql = "
             SELECT a.*, c.name as category_name 
             FROM assets a
-            JOIN categories c ON a.category_id = c.id
+            JOIN asset_categories c ON a.category_id = c.id
             WHERE 1=1
         ";
         $params = [];
@@ -61,7 +61,7 @@ class Asset extends Model {
         $stmt = $this->db->prepare("
             SELECT a.*, c.name as category_name 
             FROM assets a
-            JOIN categories c ON a.category_id = c.id
+            JOIN asset_categories c ON a.category_id = c.id
             WHERE a.id = :id 
             LIMIT 1
         ");
@@ -127,12 +127,6 @@ class Asset extends Model {
 
     /**
      * Calculate Straight-Line Depreciation.
-     * Returns:
-     * - purchase_cost
-     * - annual_depreciation
-     * - accumulated_depreciation
-     * - book_value
-     * - years_held
      */
     public function calculateDepreciation($asset) {
         $cost = (float)$asset['purchase_cost'];
@@ -167,10 +161,10 @@ class Asset extends Model {
      */
     public function getAllocationsHistory($assetId) {
         $stmt = $this->db->prepare("
-            SELECT al.*, u.name as user_name, ab.name as allocator_name
-            FROM allocations al
-            JOIN users u ON al.user_id = u.id
-            JOIN users ab ON al.allocated_by = ab.id
+            SELECT al.*, e.name as user_name, ab.name as allocator_name
+            FROM asset_allocations al
+            JOIN employees e ON al.employee_id = e.id
+            JOIN employees ab ON al.allocated_by = ab.id
             WHERE al.asset_id = :asset_id
             ORDER BY al.allocated_date DESC
         ");
@@ -183,7 +177,7 @@ class Asset extends Model {
      */
     public function getMaintenanceHistory($assetId) {
         $stmt = $this->db->prepare("
-            SELECT * FROM maintenance_schedules
+            SELECT * FROM maintenance_requests
             WHERE asset_id = :asset_id
             ORDER BY scheduled_date DESC
         ");
