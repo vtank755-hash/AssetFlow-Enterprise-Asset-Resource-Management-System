@@ -32,6 +32,12 @@
                     </div>
                 </form>
                 
+                <!-- Print PDF Button -->
+                <button onclick="window.print();" class="btn btn-sm btn-outline-primary no-print d-flex align-items-center gap-1">
+                    <i class="bi bi-printer"></i>
+                    <span class="d-none d-md-inline">Print PDF</span>
+                </button>
+                
                 <!-- Notifications Badge Link -->
                 <a href="<?php echo BASE_URL; ?>/notifications" class="text-dark position-relative px-2">
                     <i class="bi bi-bell fs-5"></i>
