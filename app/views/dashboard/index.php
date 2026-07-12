@@ -22,55 +22,56 @@ use App\Core\Session;
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0 fw-bold"><i class="bi bi-person-badge text-indigo me-2"></i>My Possessions (<?php echo $totalAssets; ?> items)</h5>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Asset Tag</th>
-                                        <th>Resource Name</th>
-                                        <th>Checkout Date</th>
-                                        <th>Return Due Date</th>
-                                        <th>Location</th>
-                                        <th>Issued By</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($staffAssignedAssets)): ?>
+                    <div class="card-body <?php echo empty($staffAssignedAssets) ? 'p-5' : 'p-0'; ?>">
+                        <?php if (empty($staffAssignedAssets)): ?>
+                            <div class="text-center py-4 text-muted">
+                                <div class="bg-light d-inline-flex align-items-center justify-content-center rounded-circle p-3 mb-3" style="width: 60px; height: 60px; color: var(--text-muted); background-color: #f1f5f9 !important;">
+                                    <i class="bi bi-box-seam fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark">No Resources Issued</h6>
+                                <p class="small mb-0 text-muted">You do not have any company equipment registered under your custody.</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
                                         <tr>
-                                            <td colspan="7" class="text-center py-5 text-muted">
-                                                <i class="bi bi-box-seam fs-1 d-block mb-3"></i>
-                                                No resources are currently registered under your name.
-                                            </td>
+                                            <th>Asset Tag</th>
+                                            <th>Resource Name</th>
+                                            <th>Checkout Date</th>
+                                            <th>Return Due Date</th>
+                                            <th>Location</th>
+                                            <th>Issued By</th>
+                                            <th>Status</th>
                                         </tr>
-                                    <?php else: ?>
+                                    </thead>
+                                    <tbody>
                                         <?php foreach ($staffAssignedAssets as $alloc): ?>
                                             <tr>
                                                 <td><strong class="text-indigo"><?php echo htmlspecialchars($alloc['asset_tag']); ?></strong></td>
                                                 <td><span class="fw-semibold text-dark"><?php echo htmlspecialchars($alloc['asset_name']); ?></span></td>
                                                 <td><?php echo htmlspecialchars(date('M d, Y', strtotime($alloc['allocated_date']))); ?></td>
                                                 <td>
-                                                    <?php 
-                                                    $isOverdue = ($alloc['due_date'] < date('Y-m-d'));
-                                                    echo $isOverdue ? 
-                                                        '<span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>' . htmlspecialchars(date('M d, Y', strtotime($alloc['due_date']))) . '</span>' : 
-                                                        htmlspecialchars(date('M d, Y', strtotime($alloc['due_date'])));
-                                                    ?>
+                                                     <?php 
+                                                     $isOverdue = ($alloc['due_date'] < date('Y-m-d'));
+                                                     echo $isOverdue ? 
+                                                         '<span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>' . htmlspecialchars(date('M d, Y', strtotime($alloc['due_date']))) . '</span>' : 
+                                                         htmlspecialchars(date('M d, Y', strtotime($alloc['due_date'])));
+                                                     ?>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($alloc['location']); ?></td>
                                                 <td><?php echo htmlspecialchars($alloc['allocator_name']); ?></td>
                                                 <td>
-                                                    <span class="status-badge <?php echo $isOverdue ? 'status-overdue' : 'status-allocated'; ?>">
-                                                        <?php echo $isOverdue ? 'Overdue' : 'Active'; ?>
-                                                    </span>
+                                                     <span class="status-badge <?php echo $isOverdue ? 'status-overdue' : 'status-allocated'; ?>">
+                                                         <?php echo $isOverdue ? 'Overdue' : 'Active'; ?>
+                                                     </span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
