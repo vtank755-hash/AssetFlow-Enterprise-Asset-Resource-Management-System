@@ -10,6 +10,7 @@ require_once __DIR__ . '/../config/constants.php';
 require_once __DIR__ . '/../config/mail.php';
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/autoload.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 // Load Composer Autoloader
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
@@ -69,6 +70,18 @@ $router->add('users',                'UserController@index');
 $router->add('users/create',         'UserController@create');
 $router->add('users/edit',           'UserController@edit');
 $router->add('profile',              'UserController@profile');
+
+// Register Department Administration Routes
+$router->add('departments',          'DepartmentController@index');
+$router->add('departments/create',   'DepartmentController@create');
+$router->add('departments/edit',     'DepartmentController@edit');
+$router->add('departments/delete',   'DepartmentController@delete');
+
+// Register Category Administration Routes
+$router->add('categories',           'CategoryController@index');
+$router->add('categories/create',    'CategoryController@create');
+$router->add('categories/edit',      'CategoryController@edit');
+$router->add('categories/delete',    'CategoryController@delete');
 
 // Dispatch Router request
 $router->dispatch($_SERVER['REQUEST_URI']);
