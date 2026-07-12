@@ -216,8 +216,13 @@ CREATE TABLE `audit_cycles` (
   `end_date` DATE NOT NULL,
   `status` ENUM('Scheduled', 'In Progress', 'Completed') NOT NULL DEFAULT 'Scheduled',
   `created_by` INT NOT NULL,
+  `assigned_auditor_id` INT DEFAULT NULL,
+  `department_id` INT DEFAULT NULL,
+  `location_scope` VARCHAR(150) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`created_by`) REFERENCES `employees`(`id`) ON DELETE RESTRICT
+  FOREIGN KEY (`created_by`) REFERENCES `employees`(`id`) ON DELETE RESTRICT,
+  FOREIGN KEY (`assigned_auditor_id`) REFERENCES `employees`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`department_id`) REFERENCES `departments`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- =========================================================================

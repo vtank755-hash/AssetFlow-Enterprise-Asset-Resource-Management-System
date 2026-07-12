@@ -64,6 +64,45 @@ class ReportController extends Controller {
     }
 
     /**
+     * Department Allocations Report View
+     */
+    public function department() {
+        $this->checkAccess(['Admin', 'Manager']);
+        $records = $this->reportModel->getDepartmentAssetData();
+
+        $this->view('reports/department', [
+            'title' => 'Department Asset Allocation',
+            'records' => $records
+        ]);
+    }
+
+    /**
+     * Booking Report View
+     */
+    public function booking() {
+        $this->checkAccess(['Admin', 'Manager']);
+        $records = $this->reportModel->getBookingData();
+
+        $this->view('reports/booking', [
+            'title' => 'Booking Frequency Analytics',
+            'records' => $records
+        ]);
+    }
+
+    /**
+     * Audit Stocktake Report View
+     */
+    public function audit() {
+        $this->checkAccess(['Admin', 'Manager']);
+        $records = $this->reportModel->getAuditSummaryData();
+
+        $this->view('reports/audit', [
+            'title' => 'Stocktake Audit Summary',
+            'records' => $records
+        ]);
+    }
+
+    /**
      * Streams CSV file dynamically for download
      */
     public function export() {
@@ -142,6 +181,70 @@ class ReportController extends Controller {
                         $row['currently_allocated'],
                         $row['total_historical_allocations'],
                         $row['utilization_rate']
+                    ]);
+                }
+                fclose($output);
+                exit;
+
+            case 'department':
+                $filename = "department_allocations_" . date('Ymd') . ".csv";
+                header('Content-Type: text/csv; charset=utf-8');
+                header('Content-Disposition: attachment; filename=' . $filename);
+                
+                $output = fopen('php://output', 'w');
+                fputcsv($output, ['Department Name', 'Department Code', 'Total Active Assets', 'Total Portfolio Valuation (₹)']);
+                
+                $records = $this->reportModel->getDepartmentAssetData();
+                foreach ($records as $row) {
+                    fputcsv($output, [
+                        $row['department_name'],
+                        $row['department_code'],
+                        $row['total_assets'],
+                        number_format($row['total_valuation'] ?: 0, 2, '.', '')
+                    ]);
+                }
+                fclose($output);
+                exit;
+
+            case 'booking':
+                $filename = "resource_bookings_" . date('Ymd') . ".csv";
+                header('Content-Type: text/csv; charset=utf-8');
+                header('Content-Disposition: attachment; filename=' . $filename);
+                
+                $output = fopen('php://output', 'w');
+                fputcsv($output, ['Category/Class Name', 'Total Bookings', 'Upcoming', 'Ongoing', 'Completed', 'Cancelled']);
+                
+                $records = $this->reportModel->getBookingData();
+                foreach ($records as $row) {
+                    fputcsv($output, [
+                        $row['category_name'],
+                        $row['total_bookings'],
+                        $row['upcoming_bookings'],
+                        $row['ongoing_bookings'],
+                        $row['completed_bookings'],
+                        $row['cancelled_bookings']
+                    ]);
+                }
+                fclose($output);
+                exit;
+
+            case 'audit':
+                $filename = "stocktake_audits_" . date('Ymd') . ".csv";
+                header('Content-Type: text/csv; charset=utf-8');
+                header('Content-Disposition: attachment; filename=' . $filename);
+                
+                $output = fopen('php://output', 'w');
+                fputcsv($output, ['Audit Cycle Title', 'Status', 'Total Checked', 'Verified (Match)', 'Missing (Lost)', 'Damaged (Repairs)']);
+                
+                $records = $this->reportModel->getAuditSummaryData();
+                foreach ($records as $row) {
+                    fputcsv($output, [
+                        $row['cycle_title'],
+                        $row['cycle_status'],
+                        $row['total_checked'],
+                        $row['verified_count'],
+                        $row['missing_count'],
+                        $row['damaged_count']
                     ]);
                 }
                 fclose($output);

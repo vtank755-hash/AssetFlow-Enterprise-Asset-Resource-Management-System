@@ -44,7 +44,7 @@ class Report extends Model {
     }
 
     /**
-     * Compile Maintenance Expenses Report
+     * Compile Maintenance Expenses Report (using Resolved status)
      */
     public function getMaintenanceExpenseData() {
         $stmt = $this->db->prepare("
@@ -54,7 +54,7 @@ class Report extends Model {
                    SUM(CASE WHEN m.completion_date IS NOT NULL THEN DATEDIFF(m.completion_date, m.scheduled_date) ELSE 0 END) as total_downtime_days
             FROM assets a
             JOIN asset_categories c ON a.category_id = c.id
-            LEFT JOIN maintenance_requests m ON a.id = m.asset_id AND m.status = 'Completed'
+            LEFT JOIN maintenance_requests m ON a.id = m.asset_id AND m.status = 'Resolved'
             GROUP BY a.id
             ORDER BY total_cost DESC
         ");
@@ -77,6 +77,65 @@ class Report extends Model {
             LEFT JOIN asset_allocations al ON a.id = al.asset_id
             GROUP BY c.id
             ORDER BY utilization_rate DESC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Compile Department Asset Allocation Report
+     */
+    public function getDepartmentAssetData() {
+        $stmt = $this->db->prepare("
+            SELECT d.name as department_name, d.code as department_code, 
+                   COUNT(a.id) as total_assets, 
+                   SUM(a.purchase_cost) as total_valuation
+            FROM departments d
+            LEFT JOIN employees e ON d.id = e.department_id
+            LEFT JOIN asset_allocations al ON e.id = al.employee_id AND al.status = 'Active'
+            LEFT JOIN assets a ON al.asset_id = a.id AND a.status != 'Disposed'
+            GROUP BY d.id
+            ORDER BY d.name ASC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Compile Booking Frequency Report
+     */
+    public function getBookingData() {
+        $stmt = $this->db->prepare("
+            SELECT c.name as category_name, 
+                   COUNT(rb.id) as total_bookings,
+                   SUM(CASE WHEN rb.status = 'Upcoming' THEN 1 ELSE 0 END) as upcoming_bookings,
+                   SUM(CASE WHEN rb.status = 'Ongoing' THEN 1 ELSE 0 END) as ongoing_bookings,
+                   SUM(CASE WHEN rb.status = 'Completed' THEN 1 ELSE 0 END) as completed_bookings,
+                   SUM(CASE WHEN rb.status = 'Cancelled' THEN 1 ELSE 0 END) as cancelled_bookings
+            FROM resource_bookings rb
+            JOIN assets a ON rb.asset_id = a.id
+            JOIN asset_categories c ON a.category_id = c.id
+            GROUP BY c.id
+            ORDER BY c.name ASC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Compile Audit Verification Cycles Report
+     */
+    public function getAuditSummaryData() {
+        $stmt = $this->db->prepare("
+            SELECT ac.title as cycle_title, ac.status as cycle_status,
+                   COUNT(ad.id) as total_checked,
+                   SUM(CASE WHEN ad.status = 'Verified' THEN 1 ELSE 0 END) as verified_count,
+                   SUM(CASE WHEN ad.status = 'Missing' THEN 1 ELSE 0 END) as missing_count,
+                   SUM(CASE WHEN ad.status = 'Damaged' THEN 1 ELSE 0 END) as damaged_count
+            FROM audit_cycles ac
+            LEFT JOIN audit_details ad ON ac.id = ad.audit_cycle_id
+            GROUP BY ac.id
+            ORDER BY ac.created_at DESC
         ");
         $stmt->execute();
         return $stmt->fetchAll();

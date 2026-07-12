@@ -63,6 +63,9 @@ $router->add('reports',              'ReportController@index');
 $router->add('reports/valuation',    'ReportController@valuation');
 $router->add('reports/maintenance',  'ReportController@maintenance');
 $router->add('reports/utilization',  'ReportController@utilization');
+$router->add('reports/department',   'ReportController@department');
+$router->add('reports/booking',      'ReportController@booking');
+$router->add('reports/audit',        'ReportController@audit');
 $router->add('reports/export',       'ReportController@export');
 
 // Register User Settings & Administration Routes
@@ -87,6 +90,14 @@ $router->add('categories/delete',    'CategoryController@delete');
 $router->add('bookings',             'BookingController@index');
 $router->add('bookings/create',      'BookingController@create');
 $router->add('bookings/cancel',      'BookingController@cancel');
+
+// Register Stocktake Audit Routes
+$router->add('audits',               'AuditController@index');
+$router->add('audits/create',        'AuditController@create');
+$router->add('audits/view',          'AuditController@details');
+$router->add('audits/verify',        'AuditController@verify');
+$router->add('audits/close',         'AuditController@close');
+$router->add('audits/report',        'AuditController@report');
 
 // Dispatch Router request
 $router->dispatch($_SERVER['REQUEST_URI']);
