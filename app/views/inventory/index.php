@@ -80,8 +80,8 @@ $role = Session::getRole();
                                     <?php if ($role === 'Admin' || $role === 'Manager'): ?>
                                         <td class="text-end">
                                             <div class="d-inline-flex align-items-center">
-                                                <!-- Pure CSS details trigger for Quick Qty Adjustments -->
-                                                <details class="css-dropdown me-1">
+                                                <!-- Pure CSS details trigger for Quick Qty Adjustments (Desktop Only) -->
+                                                <details class="css-dropdown me-1 d-none d-md-inline-block">
                                                     <summary class="btn btn-sm btn-outline-success py-1 px-2.5">
                                                         <i class="bi bi-arrow-down-up"></i> Adjust
                                                     </summary>
@@ -102,6 +102,11 @@ $role = Session::getRole();
                                                         </form>
                                                     </div>
                                                 </details>
+
+                                                <!-- Direct link to adjustment form (Mobile Only) -->
+                                                <a href="<?php echo BASE_URL; ?>/inventory/edit?id=<?php echo $item['id']; ?>&action=adjust" class="btn btn-sm btn-outline-success d-md-none me-1">
+                                                    <i class="bi bi-arrow-down-up"></i> Adjust
+                                                </a>
 
                                                 <!-- Metadata edit link -->
                                                 <a href="<?php echo BASE_URL; ?>/inventory/edit?id=<?php echo $item['id']; ?>&action=edit" class="btn btn-sm btn-outline-secondary border-0 px-2 py-1">
