@@ -81,15 +81,15 @@ $role = Session::getRole();
                         <div class="row g-3 mb-4">
                             <div class="col-sm-4">
                                 <span class="text-muted d-block small">PURCHASE COST</span>
-                                <span class="fw-bold fs-5 text-dark">$<?php echo htmlspecialchars(number_format($depreciation['purchase_cost'], 2)); ?></span>
+                                <span class="fw-bold fs-5 text-dark">₹<?php echo htmlspecialchars(number_format($depreciation['purchase_cost'], 2)); ?></span>
                             </div>
                             <div class="col-sm-4">
                                 <span class="text-muted d-block small">ACCUMULATED DEPRECIATION</span>
-                                <span class="fw-semibold text-danger">-$<?php echo htmlspecialchars(number_format($depreciation['accumulated_depreciation'], 2)); ?></span>
+                                <span class="fw-semibold text-danger">-₹<?php echo htmlspecialchars(number_format($depreciation['accumulated_depreciation'], 2)); ?></span>
                             </div>
                             <div class="col-sm-4">
                                 <span class="text-muted d-block small">CURRENT BOOK VALUE</span>
-                                <span class="fw-bold fs-5 text-success">$<?php echo htmlspecialchars(number_format($depreciation['book_value'], 2)); ?></span>
+                                <span class="fw-bold fs-5 text-success">₹<?php echo htmlspecialchars(number_format($depreciation['book_value'], 2)); ?></span>
                             </div>
                         </div>
 
@@ -116,7 +116,7 @@ $role = Session::getRole();
                                 <span>Annual Rate:</span> <strong class="text-dark"><?php echo htmlspecialchars($asset['depreciation_rate']); ?>%</strong>
                             </div>
                             <div class="col-6">
-                                <span>Annual Loss:</span> <strong class="text-dark">$<?php echo htmlspecialchars(number_format($depreciation['annual_depreciation'], 2)); ?></strong>
+                                <span>Annual Loss:</span> <strong class="text-dark">₹<?php echo htmlspecialchars(number_format($depreciation['annual_depreciation'], 2)); ?></strong>
                             </div>
                             <div class="col-6">
                                 <span>Years Held:</span> <strong class="text-dark"><?php echo htmlspecialchars($depreciation['years_held']); ?> years</strong>
@@ -246,7 +246,7 @@ $role = Session::getRole();
                                                 <td>
                                                     <?php echo $main['completion_date'] ? htmlspecialchars(date('M d, Y', strtotime($main['completion_date']))) : '<span class="text-muted italic">Scheduled</span>'; ?>
                                                 </td>
-                                                <td>$<?php echo htmlspecialchars(number_format($main['cost'], 2)); ?></td>
+                                                <td>₹<?php echo htmlspecialchars(number_format($main['cost'], 2)); ?></td>
                                                 <td>
                                                     <span class="status-badge <?php 
                                                         echo $main['status'] === 'Pending' ? 'status-pending' : 

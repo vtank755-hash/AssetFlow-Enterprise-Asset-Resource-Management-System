@@ -43,7 +43,7 @@
                                         </span>
                                     </td>
                                     <td class="fw-semibold text-danger">
-                                        $<?php echo htmlspecialchars(number_format($row['total_cost'] ?: 0, 2)); ?>
+                                        ₹<?php echo htmlspecialchars(number_format($row['total_cost'] ?: 0, 2)); ?>
                                     </td>
                                     <td>
                                         <span class="text-muted">

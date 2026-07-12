@@ -16,7 +16,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <span class="text-muted small fw-semibold uppercase d-block mb-1">TOTAL ACQUISITION VALUE</span>
-                    <span class="fw-bold fs-3 text-dark">$<?php echo htmlspecialchars(number_format($totals['purchase_cost'], 2)); ?></span>
+                    <span class="fw-bold fs-3 text-dark">₹<?php echo htmlspecialchars(number_format($totals['purchase_cost'], 2)); ?></span>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <span class="text-muted small fw-semibold uppercase d-block mb-1">CUMULATIVE DEPRECIATION</span>
-                    <span class="fw-bold fs-3 text-danger">-$<?php echo htmlspecialchars(number_format($totals['accumulated_depreciation'], 2)); ?></span>
+                    <span class="fw-bold fs-3 text-danger">-₹<?php echo htmlspecialchars(number_format($totals['accumulated_depreciation'], 2)); ?></span>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <span class="text-muted small fw-semibold uppercase d-block mb-1">CURRENT NET BOOK VALUE</span>
-                    <span class="fw-bold fs-3 text-success">$<?php echo htmlspecialchars(number_format($totals['book_value'], 2)); ?></span>
+                    <span class="fw-bold fs-3 text-success">₹<?php echo htmlspecialchars(number_format($totals['book_value'], 2)); ?></span>
                 </div>
             </div>
         </div>
@@ -71,9 +71,9 @@
                                     <td><span class="fw-semibold text-dark"><?php echo htmlspecialchars($asset['name']); ?></span></td>
                                     <td><?php echo htmlspecialchars($asset['category_name']); ?></td>
                                     <td><?php echo htmlspecialchars(date('M d, Y', strtotime($asset['purchase_date']))); ?></td>
-                                    <td class="text-dark">$<?php echo htmlspecialchars(number_format($asset['purchase_cost'], 2)); ?></td>
-                                    <td class="text-danger">-$<?php echo htmlspecialchars(number_format($asset['accumulated_depreciation'], 2)); ?></td>
-                                    <td class="fw-bold text-success">$<?php echo htmlspecialchars(number_format($asset['book_value'], 2)); ?></td>
+                                    <td class="text-dark">₹<?php echo htmlspecialchars(number_format($asset['purchase_cost'], 2)); ?></td>
+                                    <td class="text-danger">-₹<?php echo htmlspecialchars(number_format($asset['accumulated_depreciation'], 2)); ?></td>
+                                    <td class="fw-bold text-success">₹<?php echo htmlspecialchars(number_format($asset['book_value'], 2)); ?></td>
                                     <td>
                                         <span class="status-badge <?php 
                                             echo $asset['status'] === 'Available' ? 'status-available' : 

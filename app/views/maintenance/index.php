@@ -61,7 +61,7 @@ $role = Session::getRole();
                                     <td>
                                         <?php echo $order['completion_date'] ? htmlspecialchars(date('M d, Y', strtotime($order['completion_date']))) : '<span class="text-muted italic small">Incomplete</span>'; ?>
                                     </td>
-                                    <td class="fw-semibold text-dark">$<?php echo htmlspecialchars(number_format($order['cost'], 2)); ?></td>
+                                    <td class="fw-semibold text-dark">₹<?php echo htmlspecialchars(number_format($order['cost'], 2)); ?></td>
                                     <td>
                                         <span class="status-badge <?php 
                                             echo $order['status'] === 'Pending' ? 'status-pending' : 

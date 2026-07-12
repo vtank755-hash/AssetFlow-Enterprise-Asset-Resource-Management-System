@@ -74,8 +74,8 @@ $role = Session::getRole();
                                         </span>
                                     </td>
                                     <td><span class="text-muted"><?php echo htmlspecialchars($item['min_threshold']); ?> units (Min)</span></td>
-                                    <td>$<?php echo htmlspecialchars(number_format($item['unit_price'], 2)); ?></td>
-                                    <td class="fw-semibold">$<?php echo htmlspecialchars(number_format($item['unit_price'] * $item['quantity'], 2)); ?></td>
+                                    <td>₹<?php echo htmlspecialchars(number_format($item['unit_price'], 2)); ?></td>
+                                    <td class="fw-semibold">₹<?php echo htmlspecialchars(number_format($item['unit_price'] * $item['quantity'], 2)); ?></td>
                                     
                                     <?php if ($role === 'Admin' || $role === 'Manager'): ?>
                                         <td class="text-end">

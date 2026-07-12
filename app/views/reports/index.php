@@ -10,7 +10,7 @@
             <div class="card card-hover shadow-sm border-0 h-100">
                 <div class="card-body p-4 d-flex flex-column">
                     <div class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle p-3 mb-3" style="width: 50px; height: 50px;">
-                        <i class="bi bi-currency-dollar fs-4"></i>
+                        <i class="bi bi-currency-rupee fs-4"></i>
                     </div>
                     <h5 class="fw-bold text-dark">Asset Valuation</h5>
                     <p class="text-muted small flex-grow-1">Track financial depreciation rates, accumulated loss, and current asset book values using straight-line calculations.</p>

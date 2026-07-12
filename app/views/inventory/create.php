@@ -46,7 +46,7 @@ use App\Core\Session;
 
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <label for="unit_price" class="form-label fw-semibold">Unit Price ($) <span class="text-danger">*</span></label>
+                                <label for="unit_price" class="form-label fw-semibold">Unit Price (₹) <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" min="0" class="form-control" id="unit_price" name="unit_price" required placeholder="0.00">
                             </div>
                             <div class="col-md-6">

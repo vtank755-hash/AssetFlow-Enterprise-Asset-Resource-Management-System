@@ -104,10 +104,10 @@ use App\Core\Session;
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <span class="text-muted small fw-semibold d-block mb-1">TOTAL VALUATION</span>
-                                <span class="fw-bold fs-3 text-dark">$<?php echo htmlspecialchars(number_format($totalValuation, 2)); ?></span>
+                                <span class="fw-bold fs-3 text-dark">₹<?php echo htmlspecialchars(number_format($totalValuation, 2)); ?></span>
                             </div>
                             <div class="bg-success-subtle text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="bi bi-currency-dollar fs-4"></i>
+                                <i class="bi bi-currency-rupee fs-4"></i>
                             </div>
                         </div>
                     </div>

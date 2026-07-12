@@ -70,7 +70,7 @@ use App\Core\Session;
                                 <input type="date" class="form-control" id="purchase_date" name="purchase_date" required value="<?php echo date('Y-m-d'); ?>">
                             </div>
                             <div class="col-md-4 mb-3 mb-md-0">
-                                <label for="purchase_cost" class="form-label fw-semibold">Purchase Cost ($) <span class="text-danger">*</span></label>
+                                <label for="purchase_cost" class="form-label fw-semibold">Purchase Cost (₹) <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" min="0" class="form-control" id="purchase_cost" name="purchase_cost" required placeholder="0.00">
                             </div>
                             <div class="col-md-4">

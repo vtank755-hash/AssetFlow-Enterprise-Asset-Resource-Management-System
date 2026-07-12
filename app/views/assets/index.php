@@ -108,7 +108,7 @@ $role = Session::getRole();
                                             <?php echo htmlspecialchars($asset['status']); ?>
                                         </span>
                                     </td>
-                                    <td>$<?php echo htmlspecialchars(number_format($asset['purchase_cost'], 2)); ?></td>
+                                    <td>₹<?php echo htmlspecialchars(number_format($asset['purchase_cost'], 2)); ?></td>
                                     <td class="text-end">
                                         <div class="d-inline-flex align-items-center">
                                             <a href="<?php echo BASE_URL; ?>/assets/view?id=<?php echo $asset['id']; ?>" class="btn btn-sm btn-outline-secondary border-0 px-2 py-1 me-1">

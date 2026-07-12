@@ -82,7 +82,7 @@ class ReportController extends Controller {
                 header('Content-Disposition: attachment; filename=' . $filename);
                 
                 $output = fopen('php://output', 'w');
-                fputcsv($output, ['Asset Tag', 'Asset Name', 'Category', 'Purchase Date', 'Purchase Cost ($)', 'Accumulated Depreciation ($)', 'Current Book Value ($)', 'Status']);
+                fputcsv($output, ['Asset Tag', 'Asset Name', 'Category', 'Purchase Date', 'Purchase Cost (₹)', 'Accumulated Depreciation (₹)', 'Current Book Value (₹)', 'Status']);
                 
                 $data = $this->reportModel->getValuationData();
                 foreach ($data['assets'] as $row) {
@@ -110,7 +110,7 @@ class ReportController extends Controller {
                 header('Content-Disposition: attachment; filename=' . $filename);
                 
                 $output = fopen('php://output', 'w');
-                fputcsv($output, ['Asset Tag', 'Asset Name', 'Category', 'Total Maintenance Events', 'Total Maintenance Cost ($)', 'Total Downtime (Days)']);
+                fputcsv($output, ['Asset Tag', 'Asset Name', 'Category', 'Total Maintenance Events', 'Total Maintenance Cost (₹)', 'Total Downtime (Days)']);
                 
                 $records = $this->reportModel->getMaintenanceExpenseData();
                 foreach ($records as $row) {
